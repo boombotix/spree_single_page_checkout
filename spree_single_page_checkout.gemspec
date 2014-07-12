@@ -3,8 +3,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_single_page_checkout'
   s.version     = '2.2.2'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
+  s.summary     = 'Single Page Checkout for the Boombotix store'
   s.required_ruby_version = '>= 1.9.3'
 
   # s.author    = 'You'
@@ -21,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'pry'
   s.add_development_dependency 'poltergeist'
-  s.add_development_dependency 'capybara', '~> 2.1'
+  s.add_development_dependency 'capybara'
   s.add_development_dependency 'database_cleaner'
   s.add_development_dependency 'factory_girl', '~> 4.4'
   s.add_development_dependency 'ffaker'

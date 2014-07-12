@@ -18,6 +18,13 @@ Dependencies
 - Bootstrap (`bootstrap-sass`)
 - Fontawesome (`font-awesome-rails`)
 
+Includes
+----------
+jquery-ui-autocomplete
+jquery.payment
+jquery.h5validate
+jquery.select-to-autocomplete
+
 
 Installation
 ------------

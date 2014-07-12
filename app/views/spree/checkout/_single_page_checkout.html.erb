@@ -1,0 +1,89 @@
+<% @page_title = 'REVIEW YOUR ORDER' %>
+
+<%= content_for :head do %>
+  <%= stylesheet_link_tag 'jquery-ui-autocomplete.min' %>
+  <%= javascript_include_tag 'jquery.payment' %>
+  <%= javascript_include_tag 'jquery.h5validate' %>
+  <%= javascript_include_tag 'jquery-ui-autocomplete.min' %>
+  <%= javascript_include_tag 'jquery.select-to-autocomplete.min' %>
+  <%= javascript_include_tag 'http://maps.google.com/maps/api/js?sensor=false' %>
+<% end %>
+
+
+
+<div class="row checkout-container" data-hook>
+  <div class="col-xs-12 col-sm-5 col-md-5">
+    <div class="checkout-container index">
+
+      <% flash.each do |name, msg| -%>
+        <%= content_tag :div, msg, class: name %>
+      <% end -%>
+
+      <%# Shipping Address Form %>
+      <%= render 'spree/checkout/single_page_checkout/address_form' %>
+
+      <%# Payment Information %>
+      <%= render 'spree/checkout/single_page_checkout/payment_form' %>
+    </div>
+  </div>
+
+  <%# Order Summary - Displays to right of address & payment info & is updated via AJAX %>
+  <div class="col-xs-12 col-sm-7 col-md-7">
+    <h2>Order Summary</h2>
+    <div class="panel-box" id="checkout-summary">
+      <% @order.line_items.each do |item| %>
+        <div class="row">
+          <div class="col-xs-2 col-sm-1 col-md-1">
+            <%= item.quantity %>
+          </div>
+          <div class="col-xs-10 col-sm-8 col-md-8">
+            <%= item.name %>
+          </div>
+          <div class="col-xs-12 col-sm-3 col-md-3 right-text">
+            <%= number_to_currency( item.price ) %>
+          </div>
+        </div>
+      <% end %>
+
+      <%# Shipping / Delivery %>
+      <div class="checkout-shipping row">
+
+      </div>
+
+      <%# Price adjustments / promotions %>
+      <div id="adjustments">
+      <% if @order.line_item_adjustments.exists? %>
+        <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+          <div class="checkbox-box">
+              <%= label %> &nbsp;
+              <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>
+          </div>
+        <% end %>
+      <% end %>
+      </div>
+
+      <%# Tax %>
+      <div id="taxes">
+      <% @order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+        <div class="checkbox-box">
+          <%= label %> &nbsp;
+          (+ <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>)
+        </div>
+      <% end %>
+      </div>
+
+
+      <%# Order Total %>
+      <div class="row total">
+        <div class="col-xs-6 col-sm-9 col-md-9">Total</div>
+        <div class="col-xs-6 col-sm-3 col-md-3 right-text checkout-total"><%= number_to_currency( @order.total ) %></div>
+      </div>
+      <button class="btn checkout-btn btn-lg btn-primary btn-block disabled" id="checkout-pay-btn">
+        Pay &nbsp;
+        <span class="checkout-total">
+          <%= number_to_currency( @order.total ) %>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
