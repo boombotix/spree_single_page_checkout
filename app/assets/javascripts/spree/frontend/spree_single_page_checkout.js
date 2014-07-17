@@ -25,9 +25,14 @@ Spree.singlePageCheckout = function() {};
 // Listen to inputs on the address box. When it has
 // been completely filled out, make an AJAX call to the
 // Spree API to continue.
-
 Spree.singlePageCheckout.checkoutAddress = function() {
-  $('.addressInfo form').h5Validate();
+
+  // Validate the form inputs: sets an error class if the
+  // field does not match the 'pattern' attribute
+  $('.addressInfo form').h5Validate({
+    errorClass: 'validation-error'
+  });
+
   $('.addressInfo input').on('blur change', function() {
 
     // if all of the required inputs have been filled out,
@@ -194,7 +199,7 @@ Spree.singlePageCheckout.errorHandler = function(apiResponse, b, c) {
   // This can be built out if need be in the future; Currently the only 
   // field that will throw a validation error from the API is the 
   // state_name field.
-  $('#address_state_name').addClass('ui-state-error');
+  $('#address_state_name').addClass('validation-error');
 };
 
 

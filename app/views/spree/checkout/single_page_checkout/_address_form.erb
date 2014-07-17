@@ -1,4 +1,4 @@
-<h3>Shipping Address:</h3>
+<h3>Shipping Address</h3>
 <div class="addressInfo info">
   <%= form_for @order.shipping_address, url: api_checkout_path(@order.number), html: { autocomplete: 'on' } do |f|%>
     <div class="row top-row">
@@ -7,7 +7,7 @@
 
     <div class="row middle-row">
       <div class="col-xs-10 noPadding">
-        <%= f.text_field :address1, required: true, class: 'form-control street', placeholder: 'Address', autocomplete: 'address_line1' %>
+        <%= f.text_field :address1, required: true, class: 'form-control street', placeholder: 'Address', autocomplete: 'address-line1' %>
       </div>
       <div class="col-xs-2 noPadding geoLocator right-col">
         <i class="fa fa-crosshairs"></i>
@@ -16,15 +16,15 @@
 
     <div class="row middle-row">
       <div class="col-xs-12 col-sm-4 col-md-4">
-        <%= f.text_field :address2, class: 'form-control apt', placeholder: 'Apt', autocomplete: 'address_line2' %>
+        <%= f.text_field :address2, class: 'form-control apt', placeholder: 'Apt', autocomplete: 'address-line2' %>
       </div>
       <div class="col-xs-12 col-sm-8 col-md-8 right-col">
-        <%= f.text_field :city, required: true, class: 'form-control city', placeholder: 'City', autocomplete: 'city' %>
+        <%= f.text_field :city, required: true, class: 'form-control city', placeholder: 'City', autocomplete: 'locality' %>
       </div>
     </div> <%# .row %>
     <div class="row middle-row">
       <div class="col-xs-12 col-sm-8 col-md-8">
-        <%= f.text_field :state_name, class: 'form-control state', placeholder: 'State', required: true, autocomplete: 'administrative-area', value: @order.shipping_address.state ? @order.shipping_address.state.name : nil %>
+        <%= f.text_field :state_name, class: 'form-control state', placeholder: 'State', required: true, autocomplete: 'region', value: @order.shipping_address.state ? @order.shipping_address.state.name : nil %>
       </div>
       <div class="col-xs-12 col-sm-4 col-md-4 right-col">
         <%= f.text_field :zipcode, class: 'form-control zipcode', placeholder: 'Zip', autocomplete: 'postal-code', pattern:'[0-9]*', maxlength: 5 %>

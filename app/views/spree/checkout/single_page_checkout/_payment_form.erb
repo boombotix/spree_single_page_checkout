@@ -11,7 +11,7 @@
       <div class="col-md-12">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-fw fa-credit-card"></i></span>
-          <input type="text" id="number" class="form-control" name="payment_source[<%= @order.available_payment_methods.first.id %>][number]" placeholder="Card Number" autocompletetype="cc-number" required />
+          <input type="text" id="number" class="form-control" name="payment_source[<%= @order.available_payment_methods.first.id %>][number]" placeholder="Card Number" autocompletetype="cc-number" pattern="\d*" required />
           <input type="hidden" id="cc-type" name="payment_source[<%= @order.available_payment_methods.first.id %>][cc_type]" />
         </div>
       </div>
@@ -20,13 +20,13 @@
       <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="input-group date">
           <span class="input-group-addon"><i class="fa fa-fw fa-calendar-o"></i></span>
-          <input type="text" id="date" class="form-control date" name="payment_source[<%= @order.available_payment_methods.first.id %>][expiry]" placeholder="MM / YY" autocompletetype="cc-exp" pattern="\d{1,2}/\d{1,2}" required />
+          <input type="text" id="date" class="form-control date" name="payment_source[<%= @order.available_payment_methods.first.id %>][expiry]" placeholder="MM / YY" autocompletetype="cc-exp" pattern="\d*" required />
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 right-col">
         <div class="input-group code">
           <span class="input-group-addon"><i class="fa fa-fw fa-lock"></i></span>
-          <input type="text" id="verification_value" class="form-control code" name="payment_source[<%= @order.available_payment_methods.first.id %>][verification_value]" placeholder="CVC" autocompletetype="cc-csc" pattern="\d{3,4}" required />
+          <input type="text" id="verification_value" class="form-control code" name="payment_source[<%= @order.available_payment_methods.first.id %>][verification_value]" placeholder="CVC" autocompletetype="cc-csc" pattern="\d*" required />
         </div>
       </div>
     </div>
