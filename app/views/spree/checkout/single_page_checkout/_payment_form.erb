@@ -5,13 +5,13 @@
     <input type="hidden" name="state" value="payment" />
     <div class="row top-row">
       <input type="hidden" id="payment_method_id" name="order[payments_attributes][][payment_method_id]" value="<%= @order.available_payment_methods.first.id %>" />
-      <input type="text" id="name" class="form-control paymentName" name="payment_source[<%= @order.available_payment_methods.first.id %>][name]"autocompletetype="name" placeholder="Cardholder Name" required />
+      <input type="text" id="name" class="form-control paymentName" name="payment_source[<%= @order.available_payment_methods.first.id %>][name]"autocompletetype="name" placeholder="Cardholder Name" value="<%= session[:payment_details] ? session[:payment_details][:name] : '' %>" required />
     </div>
     <div class="row middle-row">
       <div class="col-md-12">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-fw fa-credit-card"></i></span>
-          <input type="text" id="number" class="form-control" name="payment_source[<%= @order.available_payment_methods.first.id %>][number]" placeholder="Card Number" autocompletetype="cc-number" pattern="\d*" required />
+          <input type="text" id="number" class="form-control" name="payment_source[<%= @order.available_payment_methods.first.id %>][number]" placeholder="Card Number" autocompletetype="cc-number" pattern="\d*" value="<%= session[:payment_details] ? session[:payment_details][:number] : '' %>" required />
           <input type="hidden" id="cc-type" name="payment_source[<%= @order.available_payment_methods.first.id %>][cc_type]" />
         </div>
       </div>
@@ -20,7 +20,7 @@
       <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="input-group date">
           <span class="input-group-addon"><i class="fa fa-fw fa-calendar-o"></i></span>
-          <input type="text" id="date" class="form-control date" name="payment_source[<%= @order.available_payment_methods.first.id %>][expiry]" placeholder="MM / YY" autocompletetype="cc-exp" pattern="\d*" required />
+          <input type="text" id="date" class="form-control date" name="payment_source[<%= @order.available_payment_methods.first.id %>][expiry]" placeholder="MM / YY" autocompletetype="cc-exp" pattern="\d*" value="<%= session[:payment_details] ? session[:payment_details][:expiry] : '' %>" required />
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 right-col">
@@ -34,4 +34,5 @@
       <input type="text" id="coupon_code" class="form-control coupon" name="order[coupon_code]" placeholder="Promotion Code" />
     </div>
   <% end %>
+  <% session[:payment_details] = nil %>
 </div>

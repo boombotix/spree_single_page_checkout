@@ -33,8 +33,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
     errorClass: 'validation-error'
   });
 
-  $('.addressInfo input').on('blur change', function() {
-
+  var checkAddressForm = function() {
     // if all of the required inputs have been filled out,
     if ($('.addressInfo form').h5Validate('allValid')) {
       // prepare some of the data:
@@ -72,7 +71,13 @@ Spree.singlePageCheckout.checkoutAddress = function() {
       // make the AJAX request:
       Spree.singlePageCheckout.apiRequest(data);
     }
-  });
+  };
+
+  // Run the check once in case address is already loaded from user profile
+  checkAddressForm();
+
+  // Listen for changes in the form
+  $('.addressInfo input').on('blur change', checkAddressForm);
 };
 
 // update the order summary section after a successful request

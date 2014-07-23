@@ -20,6 +20,84 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
 #checkout {
   font-size: 13px;
   padding-bottom: 3.125rem;
+  .checkbox label {
+    padding-left: 1.5625rem;
+  }
+  // for flash messages from the controller
+  .error {
+    padding: 1em;
+    margin: 10px 0;
+    color: #fff;
+    background: rgba(255,0,0,0.5);
+    @include borderRadius(3px);
+    text-align: center;
+    &:before {
+      content: 'An error occurred: ';
+    }
+  }
+  .form-control {
+    color: #000;
+    font-size: 1em;
+    line-height: 100%;
+    height: 2.5rem;
+    @include boxShadow(none);
+    &:focus {
+      background: #FAFAFA;
+      border: 2px solid #999999;
+    }
+    border: none;
+    @include borderRadius(0);
+    &:invalid {
+      background-color: #fff;
+    }
+  }
+  .panel-box {
+    background: #f4f4f3;
+    margin-top: 7px;
+    padding: 1.2rem 2.3125rem 1.6875rem;
+    border: none;
+    .checkbox, 
+    .radio {
+      margin-bottom: 0;
+      margin-top: 0;
+      min-height: 2px;
+      padding: 0 .625rem .6875rem 0;
+    }
+    .row {
+      margin: 0;
+      color: #292929;
+      font-family: $boombotixBold;
+      font-size: 1.4em;
+      padding: .625rem 0 .8125rem;
+      line-height: 100%;
+      &.total {
+        padding: 1.625rem 0 2.4375rem;
+      }
+    }
+    h5 {
+      color: #50C1FC;
+      font-family: $boombotixBold;
+      font-size: 1.1em;
+      font-weight: normal;
+      padding: .4375rem 0 .9375rem;
+    }
+    label {
+      font-family: $boombotixRegular;
+      color: #363636;
+      font-size: .92rem;
+      font-weight: normal;
+    }
+    label i {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+  .panel-box input {
+    &[type="radio"], &[type="checkbox"] {
+      margin-top: 0px;
+    }
+  }
   .title {
     border-bottom: 5px solid #50c1fc;
     margin-bottom: 2.5rem;
@@ -34,28 +112,15 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
       line-height: 140%;
     }
   }
-  // .container.upper {
-  //   @media only screen and (max-width: 767px) {
-  //     margin: 0;
-  //     padding: 0;
-  //   }
-  // }
-}
-
-.btn.checkout-btn {
-  border: none;
-  color: #FFF;
-  @include borderRadius(3px);
-  font-size: 1.2em;
-  line-height: 100%;
-  outline: none;
-  padding: .6875rem .625rem;
-  background: #46afee;
-  font-family: $boombotixRegular;
-  font-size: 1.9em;
-  -webkit-appearance: none;
-  &:hover {
-    background: #0079c1;
+  .validation-error {
+    border: 1px solid #a94442;
+    @include boxShadow(inset 0 1px 6px #ce8483);
+  }
+  input {
+    &[type="radio"], &[type="checkbox"] {
+      outline: none;
+      visibility: hidden;
+    }
   }
 }
 
@@ -120,6 +185,68 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   }
 }
 
+#main.store-checkout div.title {
+  border-bottom: 5px solid #00adeb;
+  margin: 1.875em 0 2.5em;
+  height: auto;
+  h2 {
+    text-shadow: none;
+    font-size: 1.9em;
+    margin: 0 auto;
+  }
+}
+
+#ui-id-1{
+//  autocomplete dropdown
+  max-height: 90px;
+  overflow-y: auto !important;
+}
+
+.bottom-row {
+  border-left: 2px solid #cfcfcf;
+  border-right: 2px solid #cfcfcf;
+  border-top: 1px solid #cfcfcf;
+  border-bottom: 2px solid #cfcfcf;
+  @include borderRadius(0 0 3px 3px);
+}
+.btn.checkout-btn {
+  border: none;
+  color: #FFF;
+  @include borderRadius(3px);
+  font-size: 1.2em;
+  line-height: 100%;
+  outline: none;
+  padding: .6875rem .625rem;
+  background: #46afee;
+  font-family: $boombotixRegular;
+  font-size: 1.9em;
+  -webkit-appearance: none;
+  &:hover {
+    background: #0079c1;
+  }
+}
+.checkbox, .chckbox-box {
+  font-size: 1.12em;
+}
+.checkbox-box {
+  padding-top: 2px;
+}
+.geoLocator{
+  height: 2.5rem;
+  line-height: 2.5rem;
+  font-size: 1.5em;
+  text-align: center;
+  color: #3c8a0a;
+}
+.middle-row {
+  border-left: 2px solid #cfcfcf;
+  border-right: 2px solid #cfcfcf;
+  border-top: 1px solid #cfcfcf;
+  @include borderRadius(0);
+}
+.noPadding{
+  padding: 0;
+}
 .panel-box,
 .info {
   .row {
@@ -131,173 +258,36 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     }
   }
 }
-
-// .index {
-//   .form-control {
-//     color: #b3b3b6;
-//     font-size: 1em;
-//     line-height: 100%;
-//     height: 2.5rem;
-//     @include boxShadow(none);
-//     &:focus {
-//       background: #FAFAFA;
-//       border: 2px solid #999999;
-//     }
-//   }
-//   .validation-error {
-//     border: 1px solid #a94442;
-//     @include boxShadow(inset 0 1px 6px #ce8483);
-//     // -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483 !important;
-//     // box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483 !important;
-//   }
-// }
-
+.panel-box label, .remember label {
+  position: relative;
+}
+.paymentInfo,
+.addressInfo {
+  margin-bottom: 2.875rem;
+}
+.paymentInfo {
+  .input-group-addon {
+    background: none;
+    border: 0;
+    @include borderRadius(0);
+    color: green;
+  }
+}
+.right-col {
+  border-left: 1px solid #cfcfcf;
+}
+.right-text {
+  text-align: right;
+}
 .top-row {
   border-left: 2px solid #cfcfcf;
   border-right: 2px solid #cfcfcf;
   border-top: 2px solid #cfcfcf;
   @include borderRadius(3px 3px 0 0);
 }
-.middle-row {
-  border-left: 2px solid #cfcfcf;
-  border-right: 2px solid #cfcfcf;
-  border-top: 1px solid #cfcfcf;
-  @include borderRadius(0);
-}
-.bottom-row {
-  border-left: 2px solid #cfcfcf;
-  border-right: 2px solid #cfcfcf;
-  border-top: 1px solid #cfcfcf;
-  border-bottom: 2px solid #cfcfcf;
-  @include borderRadius(0 0 3px 3px);
-}
-.right-col {
-  border-left: 1px solid #cfcfcf;
-}
-
-.panel-box label, .remember label {
-  position: relative;
-}
-
 label .fa-check-square-o {
   color: #7FBEA0;
 }
-
-.geoLocator{
-  height: 2.5rem;
-  line-height: 2.5rem;
-  font-size: 1.5em;
-  text-align: center;
-  color: #3c8a0a;
-}
-
-#checkout {
-  .panel-box {
-    background: #f4f4f3;
-    margin-top: 7px;
-    padding: 1.2rem 2.3125rem 1.6875rem;
-    border: none;
-    .row {
-      margin: 0;
-      color: #292929;
-      font-family: $boombotixBold;
-      font-size: 1.4em;
-      padding: .625rem 0 .8125rem;
-      line-height: 100%;
-      &.total {
-        padding: 1.625rem 0 2.4375rem;
-      }
-    }
-    label i {
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    h5 {
-      color: #50C1FC;
-      font-family: $boombotixBold;
-      font-size: 1.1em;
-      font-weight: normal;
-      padding: .4375rem 0 .9375rem;
-    }
-    label {
-      font-family: $boombotixRegular;
-      color: #363636;
-      font-size: .92rem;
-      font-weight: normal;
-    }
-    .radio, .checkbox {
-      margin-bottom: 0;
-      margin-top: 0;
-      min-height: 2px;
-      padding: 0 .625rem .6875rem 0;
-    }
-  }
-  .checkbox label {
-    padding-left: 1.5625rem;
-  }
-  .form-control {
-    color: #b3b3b6;
-    font-size: 1em;
-    line-height: 100%;
-    height: 2.5rem;
-    @include boxShadow(none);
-    &:focus {
-      background: #FAFAFA;
-      border: 2px solid #999999;
-    }
-    border: none;
-    @include borderRadius(0);
-    &:invalid {
-      background-color: #fff;
-    }
-  }
-  .validation-error {
-    border: 1px solid #a94442;
-    @include boxShadow(inset 0 1px 6px #ce8483);
-    // -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483 !important;
-    // box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483 !important;
-  }
-  input {
-    &[type="radio"], &[type="checkbox"] {
-      outline: none;
-      visibility: hidden;
-    }
-  }
-  .panel-box input {
-    &[type="radio"], &[type="checkbox"] {
-      margin-top: 0px;
-    }
-  }
-  // for flash messages from the controller
-  .error {
-    padding: 1em;
-    margin: 10px 0;
-    color: #fff;
-    background: rgba(255,0,0,0.5);
-    @include borderRadius(3px);
-    text-align: center;
-    &:before {
-      content: 'An error occurred: ';
-    }
-  }
-}
-
-.right-text {
-  text-align: right;
-}
-
-.checkbox-box {
-  padding-top: 2px;
-}
-
-.checkbox, .chckbox-box {
-  font-size: 1.12em;
-}
-
-// #checkout input[type="checkbox"] {
-//   display: none;
-// }
 
 @media only screen and (max-width: 767px) {
   #checkout.container.upper {
@@ -312,6 +302,9 @@ label .fa-check-square-o {
       padding: 1.2 rem;
     }
   }
+  .btn.checkout-btn {
+    font-size: 1.5em;
+  }
   .right-col {
     border-left: none;
     border-top: 1px solid #cfcfcf;
@@ -320,42 +313,4 @@ label .fa-check-square-o {
       border-left: 1px solid #cfcfcf;
     }
   }
-  .btn.checkout-btn {
-    font-size: 1.5em;
-  }
-}
-
-.paymentInfo, .addressInfo {
-  margin-bottom: 2.875rem;
-}
-
-.paymentInfo {
-  .input-group-addon {
-    background: none;
-    border: 0;
-    @include borderRadius(0);
-    color: green;
-  }
-}
-
-.noPadding{
-  padding: 0;
-}
-
-#ui-id-1{
-//  autocomplete dropdown
-  max-height: 90px;
-  overflow-y: auto !important;
-}
-
-#main.store-checkout div.title h2 {
-  text-shadow: none;
-  font-size: 1.9em;
-  margin: 0 auto;
-}
-
-#main.store-checkout div.title {
-  border-bottom: 5px solid #00adeb;
-  margin: 1.875em 0 2.5em;
-  height: auto;
 }
