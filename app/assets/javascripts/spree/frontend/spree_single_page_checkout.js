@@ -36,6 +36,16 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   var checkAddressForm = function() {
     // if all of the required inputs have been filled out,
     if ($('.addressInfo form').h5Validate('allValid')) {
+
+      // Must be true to activate Pay button
+      Spree.singlePageCheckout.addressFormValid = true;
+      if (Spree.singlePageCheckout.paymentFormValid) {
+        $('#checkout-pay-btn').removeClass('disabled');
+        $('#checkout-pay-btn').unbind('click').on('click', function() {
+          $('#payment-form').submit();
+        });
+      }
+
       // prepare some of the data:
       var data,
         fullName = $('#address_full_name').val(),
@@ -50,7 +60,6 @@ Spree.singlePageCheckout.checkoutAddress = function() {
       addressInfo = {
         firstname: firstName,
         lastname: lastName,
-        // full_name: fullName,
         address1: $('#address_address1').val(),
         address2: $('#address_address2').val(),
         city: $('#address_city').val(),
@@ -70,6 +79,12 @@ Spree.singlePageCheckout.checkoutAddress = function() {
 
       // make the AJAX request:
       Spree.singlePageCheckout.apiRequest(data);
+    }
+    else {
+      // Keeps pay button disabled or makes it
+      // disabled if it has already been activated
+      Spree.singlePageCheckout.addressFormValid = false;
+      $('#checkout-pay-btn').addClass('disabled');
     }
   };
 
@@ -141,9 +156,6 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
   }
 };
 
-
-
-
 // Make an API call when the user selects their delivery options
 Spree.singlePageCheckout.checkoutDelivery = function(rate_id, shipment_id) {
   var data = {
@@ -162,18 +174,62 @@ Spree.singlePageCheckout.checkoutDelivery = function(rate_id, shipment_id) {
 // Only enable the pay button once all prior steps have been completed.
 Spree.singlePageCheckout.checkoutPayment = function() {
   if ($('.paymentInfo').length > 0) { 
-    $('.paymentInfo input').on('blur', function(){
-      // validate each of the fields
-      var cart_number_valid = $.payment.validateCardNumber($('#number').val()),
-        cart_date_valid = $.payment.validateCardExpiry($('#date').val().substr(0, 2), $('#date').val().substr(5, 2)),
-        cvc_valid = $.payment.validateCardCVC($('#verification_value').val());
+    $('.paymentInfo input').on('blur change', function(){
 
-      if (cart_number_valid && cart_date_valid && cvc_valid) {
+      var payment_validate = {
+        name: {
+          id: '#name'
+        },
+        number: {
+          id: '#number'
+        },
+        date: {
+          id: '#date'
+        },
+        cvc: {
+          id: '#verification_value'
+        }
+      };
+
+      var card_date = $('#date').val();
+      payment_validate.number.valid = $.payment.validateCardNumber($('#number').val());
+      payment_validate.date.valid = $.payment.validateCardExpiry(card_date.substr(0, 2), card_date.substr(5, 2));
+      payment_validate.cvc.valid = $.payment.validateCardCVC($('#verification_value').val());
+
+      if ($('#name').val().length > 0) {
+        payment_validate.name.valid = true;
+      }
+      else
+        payment_validate.name.valid = false;
+
+      $.each(payment_validate, function(key, value) {
+        if (value.valid) {
+          $(value.id).removeClass('validation-error');
+        }
+        else {
+          $(value.id).addClass('validation-error');
+        }
+      });
+
+      if (payment_validate.name.valid && payment_validate.number.valid && payment_validate.date.valid && payment_validate.cvc.valid) {
+        Spree.singlePageCheckout.paymentFormValid = true;
+      }
+      else {
+        Spree.singlePageCheckout.paymentFormValid = false;
+        $('#checkout-pay-btn').addClass('disabled');
+      }
+
+      if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.addressFormValid) {
         $('#checkout-pay-btn').removeClass('disabled');
         $('#checkout-pay-btn').unbind('click').on('click', function() {
           $('#payment-form').submit();
         });
       }
+      else {
+        // Disable pay button in case button was already activated prior
+        $('#checkout-pay-btn').addClass('disabled');
+      }
+
     });
   } else {
     $('#checkout-pay-btn').removeClass('disabled');
@@ -287,7 +343,6 @@ $(document).ready(function() {
           $('#address_city').val(city);
           $('#address_zipcode').val(zip);
           $('#address_state_name').val(state);
-
 
         } else {
           alert('Geocoder failed due to: ' + status);

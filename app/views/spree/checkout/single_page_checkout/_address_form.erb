@@ -27,7 +27,7 @@
         <%= f.text_field :state_name, class: 'form-control state', placeholder: 'State', required: true, autocomplete: 'region', value: @order.shipping_address.state ? @order.shipping_address.state.name : nil %>
       </div>
       <div class="col-xs-12 col-sm-4 col-md-4 right-col">
-        <%= f.text_field :zipcode, class: 'form-control zipcode', placeholder: 'Zip', autocomplete: 'postal-code', pattern:'[0-9]*', maxlength: 5 %>
+        <%= f.text_field :zipcode, required: true, class: 'form-control zipcode', placeholder: 'Zip', autocomplete: 'postal-code', pattern:'[0-9]*', maxlength: 5 %>
       </div>
     </div>
     <div class="row middle-row">
