@@ -124,6 +124,10 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   }
 }
 
+#checkout-summary .checkout-shipping label {
+  display: table;
+}
+
 #checkout .checkout-container {
   padding: 0;
   .button {
@@ -165,7 +169,6 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     font-size: 1.66em;
     color: #5a5a5a;
     padding: 0 0 .5rem;
-    font-weight: bold;
     text-shadow: none;
     margin-top: 0;
   }
