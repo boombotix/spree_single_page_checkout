@@ -101,7 +101,19 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
   $('.checkout-shipping').html('');
 
   // Update the shipping options
-  var shipment_info = data.shipments[0];
+  var shipment_info;
+  if (Spree.singlePageCheckout.shipment_id) {
+    $.each(data.shipments, function(key, value) {
+      if (value.id == Spree.singlePageCheckout.shipment_id) {
+        shipment_info = value;
+      }
+    });
+  }
+  else {
+    shipment_info = data.shipments[0];
+    Spree.singlePageCheckout.shipment_id = data.shipments[0].id;
+  }
+
   var selected_shipping_rate = shipment_info.selected_shipping_rate ? shipment_info.selected_shipping_rate.id : null;
 
   if (shipment_info.shipping_rates.length >= 1) {
@@ -274,6 +286,7 @@ $(document).ready(function() {
     var rate_id = $(this).siblings('input').attr('val');
     var shipment_id = $(this).siblings('input').attr('shipment');
 
+    Spree.singlePageCheckout.shipment_id = shipment_id;
     Spree.singlePageCheckout.checkoutDelivery(rate_id, shipment_id);
 
     if ($(this).children('i').hasClass('fa-square-o')) {
