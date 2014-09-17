@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.summary     = 'Single Page Checkout for the Boombotix store'
   s.required_ruby_version = '>= 1.9.3'
 
-  # s.author    = 'You'
-  # s.email     = 'you@example.com'
+  s.author    = 'Alto Labs'
+  s.email     = 'edwin@altolabs.co'
   # s.homepage  = 'http://www.spreecommerce.com'
 
   s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
