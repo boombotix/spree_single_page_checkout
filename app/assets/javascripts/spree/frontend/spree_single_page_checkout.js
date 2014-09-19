@@ -42,6 +42,9 @@ Spree.singlePageCheckout.checkoutAddress = function() {
       if (Spree.singlePageCheckout.paymentFormValid) {
         $('#checkout-pay-btn').removeClass('disabled');
         $('#checkout-pay-btn').unbind('click').on('click', function() {
+          // Remove value from field to prevent submisson
+          // of invalid coupon or double submission of valid code
+          $('#coupon_code').val('');
           $('#payment-form').submit();
         });
       }
@@ -152,6 +155,30 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
     }
   }
 
+  // Update line_item promotions
+  var items = data.line_items;
+  $.each(items, function(index, item) {
+    if (item.adjustments.length > 0) {
+      for (var j = 0; j < item.adjustments.length; j++) {
+        if (item.adjustments[j].source_type == 'Spree::PromotionAction') {
+          Spree.singlePageCheckout.promoApproved = true;
+          $('#line-item-adjustments').html('<div class="checkbox-box"> ' + item.adjustments[j].label + ' ' + adjustments[j].display_amount + '</div>');
+        }  
+      }
+    }
+  });
+
+  // Update whole order promotions
+  var adjustments = data.adjustments;
+  if (adjustments.length > 0) {
+    for (var i = 0; i < adjustments.length; i++) {
+      if (adjustments[i].source_type == 'Spree::PromotionAction') {
+        Spree.singlePageCheckout.promoApproved = true;
+        $('#order-adjustments').html('<div class="checkbox-box"> ' + adjustments[i].label + ' ' + adjustments[i].display_amount + '</div>');
+      }  
+    }
+  }
+
   // Update taxes and total
   Spree.singlePageCheckout.total = data.total;
   var taxes = data.display_additional_tax_total;
@@ -234,6 +261,9 @@ Spree.singlePageCheckout.checkoutPayment = function() {
       if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.addressFormValid) {
         $('#checkout-pay-btn').removeClass('disabled');
         $('#checkout-pay-btn').unbind('click').on('click', function() {
+          // Remove value from field to prevent submisson
+          // of invalid coupon or double submission of valid code
+          $('#coupon_code').val('');
           $('#payment-form').submit();
         });
       }
@@ -248,6 +278,22 @@ Spree.singlePageCheckout.checkoutPayment = function() {
   }
 };
 
+// Grabs coupon code for an API call
+Spree.singlePageCheckout.checkoutCoupon = function() {
+  $('#coupon_code').on('change', function() {
+    // Only make API call if no coupon has been approved
+    if (Spree.singlePageCheckout.promoApproved === false) {
+      var entered_code = $('#coupon_code').val();
+      var data = {
+        order: {
+          coupon_code: entered_code
+        }
+      };
+      Spree.singlePageCheckout.apiRequest(data);
+    }
+  });
+};
+
 // function for making Spree API calls
 Spree.singlePageCheckout.apiRequest = function(data) {
   var url = '/api/checkouts/' + Spree.current_order_id ;
@@ -259,7 +305,19 @@ Spree.singlePageCheckout.apiRequest = function(data) {
     data: data,
     headers: { 'X-Spree-Token': Spree.current_order_token },
     success: function(response) {
-      Spree.singlePageCheckout.updateOrderSummary(response);
+      // Invalid coupons will only return an error message, which
+      // removes all shipping selections from the page if updateOrderSummary
+      // is called with just that data. updateOrderSummary will only
+      // be called if shipment data exists within the response
+      if (Object.keys(response).indexOf('shipments') > -1) {
+        Spree.singlePageCheckout.updateOrderSummary(response);
+      }
+      else {
+        // Invalid coupons will still update shipping rate ID's on the
+        // backend so another API call must be made to bring the updated
+        // ID's onto the page. 
+        Spree.singlePageCheckout.apiRequest({});
+      }
     },
     error: function(response, b,c ) {
       Spree.singlePageCheckout.errorHandler(response,b,c);
@@ -383,5 +441,11 @@ $(document).ready(function() {
 
   // listen for changes on the payments box
   Spree.singlePageCheckout.checkoutPayment();
+
+  // Initially set to false. Helps determine whether to 
+  // make an API call upon entering promotion code
+  Spree.singlePageCheckout.promoApproved = false;
+  // Listen for changes in the promotion code input field
+  Spree.singlePageCheckout.checkoutCoupon();
 
 });

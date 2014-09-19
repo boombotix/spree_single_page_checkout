@@ -56,7 +56,8 @@
       </div>
 
       <%# Price adjustments / promotions %>
-      <div id="adjustments">
+      <%# For line-item promotions %>
+      <div id="line-item-adjustments">
       <% if @order.line_item_adjustments.exists? %>
         <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
           <div class="checkbox-box">
@@ -65,6 +66,17 @@
           </div>
         <% end %>
       <% end %>
+      </div>
+      <%# For promotions on the whole order %>
+      <div id="order-adjustments">
+        <% if @order.adjustments.exists? %>
+          <% @order.adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+            <div class="checkbox-box">
+                <%= label %> &nbsp;
+                <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
 
       <%# Tax %>
