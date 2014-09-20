@@ -336,116 +336,120 @@ Spree.singlePageCheckout.errorHandler = function(apiResponse, b, c) {
 
 $(document).ready(function() {
 
+  // Only execute if specific page loads
+  if ($('#checkout-content').length > 0) {
 
-  $('.checkout-shipping').unbind('click').on('click', '.checkbox label', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    $('.checkout-shipping').unbind('click').on('click', '.checkbox label', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-    var rate_id = $(this).siblings('input').attr('val');
-    var shipment_id = $(this).siblings('input').attr('shipment');
+      var rate_id = $(this).siblings('input').attr('val');
+      var shipment_id = $(this).siblings('input').attr('shipment');
 
-    Spree.singlePageCheckout.shipment_id = shipment_id;
-    Spree.singlePageCheckout.checkoutDelivery(rate_id, shipment_id);
+      Spree.singlePageCheckout.shipment_id = shipment_id;
+      Spree.singlePageCheckout.checkoutDelivery(rate_id, shipment_id);
 
-    if ($(this).children('i').hasClass('fa-square-o')) {
-      $(this).children('i').removeClass('fa-square-o').addClass('fa-check-square-o');
-    } else {
-      $(this).children('i').removeClass('fa-check-square-o').addClass('fa-square-o');
-    }
-  });
-
-
-  function matchGeoData(address_component, type) {
-    if (address_component.types.indexOf(type) !== -1) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  var geoSuccessHandler = function(position) {
-    var lat = position.coords.latitude,
-      lng = position.coords.longitude,
-      geocoder = new google.maps.Geocoder(),
-      latlng = new google.maps.LatLng(lat, lng);
-
-    geocoder.geocode({
-      'latLng': latlng
-    }, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-
-          $('.fa-crosshairs').removeClass('fa-spin');
-
-          // Give me address in multiple objects
-          var addressComponents = results[0].address_components,
-            streetNumber,
-            streetName,
-            zip,
-            city,
-            state,
-            country;
-
-          for (var i = 0; i < addressComponents.length; i++) {
-            var c = addressComponents[i];
-            if (matchGeoData(c, 'street_number')) {
-              streetNumber = c.long_name;
-            }
-            if (matchGeoData(c, 'route')) {
-              streetName = c.short_name;
-            }
-            if (matchGeoData(c, 'postal_code')) {
-              zip = c.long_name;
-            }
-            if (matchGeoData(c, 'locality')) {
-              city = c.long_name;
-            }
-            if (matchGeoData(c, 'administrative_area_level_1')) {
-              state = c.long_name;
-            }
-            if (matchGeoData(c, 'administrative_area_level_1')) {
-              country = c.long_name;
-            }
-          }
-
-          // Populate the address form
-          $('#address_country_id option:contains(' + country + ')').attr('selected', true);
-          $('#address_address1').val(streetNumber + ' ' + streetName);
-          $('#address_city').val(city);
-          $('#address_zipcode').val(zip);
-          $('#address_state_name').val(state);
-
-        } else {
-          alert('Geocoder failed due to: ' + status);
-        }
+      if ($(this).children('i').hasClass('fa-square-o')) {
+        $(this).children('i').removeClass('fa-square-o').addClass('fa-check-square-o');
+      } else {
+        $(this).children('i').removeClass('fa-check-square-o').addClass('fa-square-o');
       }
     });
-  };
 
-  $('.geoLocator').unbind('click').on('click', function() {
-    navigator.geolocation.getCurrentPosition(geoSuccessHandler, null, {
-      enableHighAccuracy: true
+
+    function matchGeoData(address_component, type) {
+      if (address_component.types.indexOf(type) !== -1) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    var geoSuccessHandler = function(position) {
+      var lat = position.coords.latitude,
+        lng = position.coords.longitude,
+        geocoder = new google.maps.Geocoder(),
+        latlng = new google.maps.LatLng(lat, lng);
+
+      geocoder.geocode({
+        'latLng': latlng
+      }, function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (results[0]) {
+
+            $('.fa-crosshairs').removeClass('fa-spin');
+
+            // Give me address in multiple objects
+            var addressComponents = results[0].address_components,
+              streetNumber,
+              streetName,
+              zip,
+              city,
+              state,
+              country;
+
+            for (var i = 0; i < addressComponents.length; i++) {
+              var c = addressComponents[i];
+              if (matchGeoData(c, 'street_number')) {
+                streetNumber = c.long_name;
+              }
+              if (matchGeoData(c, 'route')) {
+                streetName = c.short_name;
+              }
+              if (matchGeoData(c, 'postal_code')) {
+                zip = c.long_name;
+              }
+              if (matchGeoData(c, 'locality')) {
+                city = c.long_name;
+              }
+              if (matchGeoData(c, 'administrative_area_level_1')) {
+                state = c.long_name;
+              }
+              if (matchGeoData(c, 'administrative_area_level_1')) {
+                country = c.long_name;
+              }
+            }
+
+            // Populate the address form
+            $('#address_country_id option:contains(' + country + ')').attr('selected', true);
+            $('#address_address1').val(streetNumber + ' ' + streetName);
+            $('#address_city').val(city);
+            $('#address_zipcode').val(zip);
+            $('#address_state_name').val(state);
+
+          } else {
+            alert('Geocoder failed due to: ' + status);
+          }
+        }
+      });
+    };
+
+    $('.geoLocator').unbind('click').on('click', function() {
+      navigator.geolocation.getCurrentPosition(geoSuccessHandler, null, {
+        enableHighAccuracy: true
+      });
+      $(this).find('i').toggleClass('fa-spin');
     });
-    $(this).find('i').toggleClass('fa-spin');
-  });
 
-  $('#number').payment('formatCardNumber');
-  $('#date').payment('formatCardExpiry');
-  $('#verification_value').payment('formatCardCVC');
+    $('#number').payment('formatCardNumber');
+    $('#date').payment('formatCardExpiry');
+    $('#verification_value').payment('formatCardCVC');
 
-  // Country Selector
-  $('#address_country_id').selectToAutocomplete();
+    // Country Selector
+    $('#address_country_id').selectToAutocomplete();
 
-  // listen for changes on the address box
-  Spree.singlePageCheckout.checkoutAddress();
+    // listen for changes on the address box
+    Spree.singlePageCheckout.checkoutAddress();
 
-  // listen for changes on the payments box
-  Spree.singlePageCheckout.checkoutPayment();
+    // listen for changes on the payments box
+    Spree.singlePageCheckout.checkoutPayment();
 
-  // Initially set to false. Helps determine whether to 
-  // make an API call upon entering promotion code
-  Spree.singlePageCheckout.promoApproved = false;
-  // Listen for changes in the promotion code input field
-  Spree.singlePageCheckout.checkoutCoupon();
+    // Initially set to false. Helps determine whether to 
+    // make an API call upon entering promotion code
+    Spree.singlePageCheckout.promoApproved = false;
+    // Listen for changes in the promotion code input field
+    Spree.singlePageCheckout.checkoutCoupon();
+
+  }
 
 });
