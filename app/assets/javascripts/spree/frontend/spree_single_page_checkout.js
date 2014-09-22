@@ -112,7 +112,8 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
       }
     });
   }
-  else {
+
+  if (shipment_info === undefined) {
     shipment_info = data.shipments[0];
     Spree.singlePageCheckout.shipment_id = data.shipments[0].id;
   }
