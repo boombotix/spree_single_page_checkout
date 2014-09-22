@@ -14,5 +14,4 @@ Spree::Order.class_eval do
     end
     self.update!
   end
-
 end

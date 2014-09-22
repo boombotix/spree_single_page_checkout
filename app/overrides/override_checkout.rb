@@ -3,4 +3,4 @@ Deface::Override.new(
   replace_contents: '#checkout',
   partial: 'spree/checkout/single_page_checkout',
   name: 'single_page_checkout'
-  )
+)

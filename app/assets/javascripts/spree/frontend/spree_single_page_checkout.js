@@ -164,7 +164,7 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
         if (item.adjustments[j].source_type == 'Spree::PromotionAction') {
           Spree.singlePageCheckout.promoApproved = true;
           $('#line-item-adjustments').html('<div class="checkbox-box"> ' + item.adjustments[j].label + ' ' + adjustments[j].display_amount + '</div>');
-        }  
+        }
       }
     }
   });
@@ -176,7 +176,7 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
       if (adjustments[i].source_type == 'Spree::PromotionAction') {
         Spree.singlePageCheckout.promoApproved = true;
         $('#order-adjustments').html('<div class="checkbox-box"> ' + adjustments[i].label + ' ' + adjustments[i].display_amount + '</div>');
-      }  
+      }
     }
   }
 
@@ -213,7 +213,7 @@ Spree.singlePageCheckout.checkoutDelivery = function(rate_id, shipment_id) {
 
 // Only enable the pay button once all prior steps have been completed.
 Spree.singlePageCheckout.checkoutPayment = function() {
-  if ($('.paymentInfo').length > 0) { 
+  if ($('.paymentInfo').length > 0) {
     $('.paymentInfo input').on('blur change', function(){
 
       var payment_validate = {
@@ -316,7 +316,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
       else {
         // Invalid coupons will still update shipping rate ID's on the
         // backend so another API call must be made to bring the updated
-        // ID's onto the page. 
+        // ID's onto the page.
         Spree.singlePageCheckout.apiRequest({});
       }
     },
@@ -328,8 +328,8 @@ Spree.singlePageCheckout.apiRequest = function(data) {
 
 // Handle Errors returned from the API
 Spree.singlePageCheckout.errorHandler = function(apiResponse, b, c) {
-  // This can be built out if need be in the future; Currently the only 
-  // field that will throw a validation error from the API is the 
+  // This can be built out if need be in the future; Currently the only
+  // field that will throw a validation error from the API is the
   // state_name field.
   $('#address_state_name').addClass('validation-error');
 };
@@ -445,7 +445,7 @@ $(document).ready(function() {
     // listen for changes on the payments box
     Spree.singlePageCheckout.checkoutPayment();
 
-    // Initially set to false. Helps determine whether to 
+    // Initially set to false. Helps determine whether to
     // make an API call upon entering promotion code
     Spree.singlePageCheckout.promoApproved = false;
     // Listen for changes in the promotion code input field
