@@ -95,7 +95,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   checkAddressForm();
 
   // Listen for changes in the form
-  $('.addressInfo input').on('blur change', checkAddressForm);
+  $('.addressInfo input').on('change', checkAddressForm);
 };
 
 // update the order summary section after a successful request
@@ -214,7 +214,7 @@ Spree.singlePageCheckout.checkoutDelivery = function(rate_id, shipment_id) {
 // Only enable the pay button once all prior steps have been completed.
 Spree.singlePageCheckout.checkoutPayment = function() {
   if ($('.paymentInfo').length > 0) {
-    $('.paymentInfo input').on('blur change', function(){
+    $('.paymentInfo input').on('change', function(){
 
       var payment_validate = {
         name: {
