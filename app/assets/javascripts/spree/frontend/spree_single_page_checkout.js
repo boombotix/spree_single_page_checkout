@@ -311,7 +311,17 @@ Spree.singlePageCheckout.apiRequest = function(data) {
       // is called with just that data. updateOrderSummary will only
       // be called if shipment data exists within the response
       if (Object.keys(response).indexOf('shipments') > -1) {
-        Spree.singlePageCheckout.updateOrderSummary(response);
+        // Delivery state should only exist temporarily. When delivery options
+        // get pulled in, there is already a pre-selected shipping rate. Order
+        // should then advance to 'payment' state.
+        if (response.state == 'delivery') {
+          var rate_id = response.shipments[0].selected_shipping_rate.id;
+          Spree.singlePageCheckout.shipment_id = response.shipments[0].id;
+          Spree.singlePageCheckout.checkoutDelivery(rate_id, Spree.singlePageCheckout.shipment_id);
+        }
+        else {
+          Spree.singlePageCheckout.updateOrderSummary(response);
+        }
       }
       else {
         // Invalid coupons will still update shipping rate ID's on the
