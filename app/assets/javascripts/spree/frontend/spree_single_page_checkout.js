@@ -57,6 +57,14 @@ Spree.singlePageCheckout.checkoutAddress = function() {
         lastName,
         addressInfo;
 
+      var state_name = $.trim($('#address_state_name').val());
+      if (state_name.length == 2) {
+        state_name = state_name.toUpperCase();
+      }
+      else {
+        state_name = state_name.charAt(0).toUpperCase() + state_name.slice(1).toLowerCase();
+      }
+
       splitNames = fullName.split(' ');
       firstName = splitNames[0];
       lastName = splitNames[splitNames.length - 1];
@@ -68,7 +76,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
         city: $('#address_city').val(),
         phone: $('#address_phone').val(),
         zipcode: $('#address_zipcode').val(),
-        state_name: $('#address_state_name').val(),
+        state_name: state_name,
         country_id: $('#address_country_id').val()
       };
 
