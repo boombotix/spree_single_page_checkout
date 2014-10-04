@@ -57,14 +57,6 @@ Spree.singlePageCheckout.checkoutAddress = function() {
         lastName,
         addressInfo;
 
-      var state_name = $.trim($('#address_state_name').val());
-      if (state_name.length == 2) {
-        state_name = state_name.toUpperCase();
-      }
-      else {
-        state_name = state_name.charAt(0).toUpperCase() + state_name.slice(1).toLowerCase();
-      }
-
       splitNames = fullName.split(' ');
       firstName = splitNames[0];
       lastName = splitNames[splitNames.length - 1];
@@ -76,7 +68,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
         city: $('#address_city').val(),
         phone: $('#address_phone').val(),
         zipcode: $('#address_zipcode').val(),
-        state_name: state_name,
+        state_name: $('#address_state_name').val(),
         country_id: $('#address_country_id').val()
       };
 
@@ -103,7 +95,42 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   checkAddressForm();
 
   // Listen for changes in the form
-  $('.addressInfo input').on('change', checkAddressForm);
+  $('.addressInfo input').unbind('change').on('change', checkAddressForm);
+  $('.addressInfo select').unbind('change').on('change', checkAddressForm);
+  $('.addressInfo #address_country_id').unbind('change').on('change', function() {
+    checkAddressForm();
+    Spree.singlePageCheckout.checkoutCountry();
+  });
+};
+
+// For countries other than U.S., change state dropdown to text field
+Spree.singlePageCheckout.checkoutCountry = function() {
+  var getStates = function() {
+    var country_id = $('#address_country_id').val();
+    $.get(Spree.routes.states_search, {country_id: country_id}, function(data) {
+      var $states_container;
+      if (data.states.length === 0) {
+        $states_container = $('#states-container');
+        $states_container.empty();
+        $states_container.append('<input autocomplete="region" class="form-control state validation-error h5-active" id="address_state_name" name="address[state_name]" placeholder="State, Province, or Region" required="required" type="text">');
+      }
+      else {
+        var all_states = data.states;
+        $states_container = $('#states-container');
+        $states_container.empty();
+        $states_container.append('<select autocomplete="region" class="form-control state validation-error h5-active" id="address_state_name" name="address[state_name]" required="required"></select>');
+        var $el = $('#address_state_name');
+        $.each(all_states, function(index, value) {
+          $el.append($("<option></option>")
+             .attr("value", value.name).text(value.name));
+        });
+      }
+      // Check address and rebind event handlers
+      Spree.singlePageCheckout.checkoutAddress();
+    });
+  };
+  // Run once when page loads
+  getStates();
 };
 
 // update the order summary section after a successful request
@@ -462,6 +489,9 @@ $(document).ready(function() {
 
     // listen for changes on the payments box
     Spree.singlePageCheckout.checkoutPayment();
+
+    // Run once when page loads
+    Spree.singlePageCheckout.checkoutCountry();
 
     // Initially set to false. Helps determine whether to
     // make an API call upon entering promotion code
