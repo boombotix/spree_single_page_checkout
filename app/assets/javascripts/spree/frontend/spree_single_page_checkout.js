@@ -98,7 +98,6 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   $('.addressInfo input').unbind('change').on('change', checkAddressForm);
   $('.addressInfo select').unbind('change').on('change', checkAddressForm);
   $('.addressInfo #address_country_id').unbind('change').on('change', function() {
-    checkAddressForm();
     Spree.singlePageCheckout.checkoutCountry();
   });
 };
