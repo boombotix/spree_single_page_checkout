@@ -318,6 +318,14 @@ label .fa-check-square-o {
   }
 }
 
-#address_state_name {
+select#address_state_name.form-control.state.h5-active.ui-state-valid {
   border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  overflow: hidden;
+  width: 110%;
+  background: transparent no-repeat;
+  background-position: 85% 50%;
+  background-image: asset_url('dropdown-arrow.png');
 }
