@@ -5,6 +5,11 @@
       <%= f.text_field :full_name, required: true, class: 'form-control name', placeholder: 'Name', autocomplete: 'name' %>
     </div>
     <div class="row middle-row">
+      <div class="col-md-12">
+        <%= f.collection_select :country_id, available_countries, :id, :name, {include_blank: true}, { class: 'form-control country', required: true, autocomplete: 'country-name' } %>
+      </div>
+    </div>
+    <div class="row middle-row">
       <div class="col-xs-10 noPadding">
         <%= f.text_field :address1, required: true, class: 'form-control street', placeholder: 'Address', autocomplete: 'address-line1' %>
       </div>
@@ -28,14 +33,9 @@
         <%= f.text_field :zipcode, required: true, class: 'form-control zipcode', placeholder: 'Zip', autocomplete: 'postal-code' %>
       </div>
     </div>
-    <div class="row middle-row">
-      <div class="col-md-12">
-        <%= f.phone_field :phone, required: true, class: 'form-control phone', placeholder: 'Phone', autocomplete: 'tel-national' %>
-      </div>
-    </div>
     <div class="row bottom-row">
       <div class="col-md-12">
-        <%= f.collection_select :country_id, available_countries, :id, :name, {include_blank: true}, { class: 'form-control country', required: true, autocomplete: 'country-name' } %>
+        <%= f.phone_field :phone, required: true, class: 'form-control phone', placeholder: 'Phone', autocomplete: 'tel-national' %>
       </div>
     </div>
   <% end %>
