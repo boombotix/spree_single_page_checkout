@@ -224,6 +224,18 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
   // Update the state of the checkout
   Spree.singlePageCheckout.state = data.state;
 
+  if (Spree.singlePageCheckout.promoApproved === true) {
+    $('#coupon-message').remove();
+    var container = $('.paymentInfo');
+    var span_tag = $('<span>');
+    span_tag.attr('id', 'coupon-message');
+    container.append(span_tag);
+    span_tag.html('Coupon code successfully applied!');
+  }
+  else {
+    Spree.singlePageCheckout.checkoutCoupon();
+  }
+
   // Update the payment variable
   if (data.payments.length > 0) {
     Spree.singlePageCheckout.payment = true;
@@ -315,18 +327,48 @@ Spree.singlePageCheckout.checkoutPayment = function() {
 
 // Grabs coupon code for an API call
 Spree.singlePageCheckout.checkoutCoupon = function() {
-  $('#coupon_code').on('change', function() {
-    // Only make API call if no coupon has been approved
-    if (Spree.singlePageCheckout.promoApproved === false) {
-      var entered_code = $('#coupon_code').val();
-      var data = {
-        order: {
-          coupon_code: entered_code
-        }
-      };
-      Spree.singlePageCheckout.apiRequest(data);
+  var couponCode = $('#coupon_code');
+  if (Spree.singlePageCheckout.state) {
+    // Removes the early coupon attempt message
+    if (Spree.singlePageCheckout.earlyCouponAttempt === true) {
+      $('#coupon-message').remove();
+      Spree.singlePageCheckout.earlyCouponAttempt = false;
     }
-  });
+    couponCode.unbind('keydown paste');
+    couponCode.unbind('change').on('change', function() {
+      // Only make API call if no coupon has been approved
+      if (Spree.singlePageCheckout.promoApproved === false) {
+        var entered_code = couponCode.val();
+        var data = {
+          order: {
+            coupon_code: entered_code
+          }
+        };
+        Spree.singlePageCheckout.apiRequest(data);
+      }
+      else {
+        Spree.singlePageCheckout.couponMessageCreate('A coupon code has already been applied!');
+      }
+    });
+  }
+  else {
+    // Disables coupon field if address has not been entered
+    couponCode.unbind('keydown paste').on('keydown paste', function() {
+      Spree.singlePageCheckout.couponMessageCreate('Please enter in address before entering coupon code.');
+      // Sets value to true if coupon input attempt was made before address
+      Spree.singlePageCheckout.earlyCouponAttempt = true;
+      return false;
+    });
+  }
+};
+
+Spree.singlePageCheckout.couponMessageCreate = function(message) {
+  $('#coupon-message').remove();
+  var container = $('.paymentInfo');
+  var span_tag = $('<span>');
+  span_tag.attr('id', 'coupon-message');
+  container.append(span_tag);
+  span_tag.html(message);
 };
 
 // function for making Spree API calls
@@ -361,10 +403,13 @@ Spree.singlePageCheckout.apiRequest = function(data) {
         // Invalid coupons will still update shipping rate ID's on the
         // backend so another API call must be made to bring the updated
         // ID's onto the page.
-        Spree.singlePageCheckout.apiRequest({});
+        Spree.singlePageCheckout.couponMessageCreate(response.error);
+        if (Spree.singlePageCheckout.state) {
+          Spree.singlePageCheckout.apiRequest({});
+        }
       }
     },
-    error: function(response, b,c ) {
+    error: function(response, b, c ) {
       Spree.singlePageCheckout.errorHandler(response,b,c);
     }
   });
@@ -377,7 +422,6 @@ Spree.singlePageCheckout.errorHandler = function(apiResponse, b, c) {
   // state_name field.
   $('#address_state_name').addClass('validation-error');
 };
-
 
 $(document).ready(function() {
 
@@ -483,6 +527,11 @@ $(document).ready(function() {
     // Country Selector
     $('#address_country_id').selectToAutocomplete();
 
+    // Set state if upon page refresh
+    if ($('#address_full_name').val().length > 0) {
+      Spree.singlePageCheckout.state = 'delivery';
+    }
+
     // listen for changes on the address box
     Spree.singlePageCheckout.checkoutAddress();
 
@@ -492,12 +541,15 @@ $(document).ready(function() {
     // Run once when page loads
     Spree.singlePageCheckout.checkoutCountry();
 
-    // Initially set to false. Helps determine whether to
-    // make an API call upon entering promotion code
-    Spree.singlePageCheckout.promoApproved = false;
+    // Check if promo has been entered upon page refresh
+    if ($('.promotion-label').length > 0) {
+      Spree.singlePageCheckout.promoApproved = true;
+    }
+    else {
+      Spree.singlePageCheckout.promoApproved = false;
+    }
+
     // Listen for changes in the promotion code input field
     Spree.singlePageCheckout.checkoutCoupon();
-
   }
-
 });

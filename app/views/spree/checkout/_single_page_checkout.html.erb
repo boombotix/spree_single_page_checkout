@@ -57,7 +57,7 @@
       <div id="line-item-adjustments">
       <% if @order.line_item_adjustments.exists? %>
         <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-          <div class="checkbox-box">
+          <div class="checkbox-box promotion-label">
               <%= label %> &nbsp;
               <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>
           </div>
@@ -68,7 +68,7 @@
       <div id="order-adjustments">
         <% if @order.adjustments.exists? %>
           <% @order.adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-            <div class="checkbox-box">
+            <div class="checkbox-box promotion-label">
                 <%= label %> &nbsp;
                 <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>
             </div>
