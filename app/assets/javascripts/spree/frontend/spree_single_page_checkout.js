@@ -34,7 +34,6 @@ Spree.singlePageCheckout.checkCompleteForm = function() {
 
 // Activates the pay button
 Spree.singlePageCheckout.readyForm = function() {
-  $('#checkout-pay-btn').removeClass('disabled');
   $('#checkout-pay-btn').unbind('click').on('click', function() {
     // Remove value from field to prevent submisson
     // of invalid coupon or double submission of valid code
@@ -45,7 +44,21 @@ Spree.singlePageCheckout.readyForm = function() {
 
 // Disables the pay button
 Spree.singlePageCheckout.disableForm = function() {
-  $('#checkout-pay-btn').addClass('disabled');
+  var checkoutPayBtn = $('#checkout-pay-btn');
+  var buttonPrice = $('#button-price');
+  checkoutPayBtn.unbind('click').on('click', function() {
+    $(this).addClass('disabled need-info');
+    $('#pay-button-container').effect('shake');
+    buttonPrice.fadeOut('fast', function() {
+      $('#need-info-message').fadeIn('fast', function() {
+        $(this).delay(1500).fadeOut('slow', function() {
+          buttonPrice.fadeIn('slow', function() {
+            checkoutPayBtn.removeClass('disabled need-info');
+          });
+        });
+      });
+    });
+  });
 };
 
 // Listen to inputs on the address box. When it has
@@ -308,8 +321,9 @@ Spree.singlePageCheckout.checkoutPayment = function() {
       if ($('#name').val().length > 0) {
         payment_validate.name.valid = true;
       }
-      else
+      else {
         payment_validate.name.valid = false;
+      }
 
       $.each(payment_validate, function(key, value) {
         if (value.valid) {
@@ -452,7 +466,6 @@ $(document).ready(function() {
         $(this).children('i').removeClass('fa-check-square-o').addClass('fa-square-o');
       }
     });
-
 
     function matchGeoData(address_component, type) {
       if (address_component.types.indexOf(type) !== -1) {

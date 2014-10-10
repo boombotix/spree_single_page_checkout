@@ -5,6 +5,7 @@
   <%= javascript_include_tag 'jquery.payment' %>
   <%= javascript_include_tag 'jquery.h5validate' %>
   <%= javascript_include_tag 'jquery-ui-autocomplete.min' %>
+  <%= javascript_include_tag 'jquery-ui-effect-shake.min' %>
   <%= javascript_include_tag 'jquery.select-to-autocomplete.min' %>
   <%= javascript_include_tag 'https://maps.google.com/maps/api/js?sensor=false' %>
 <% end %>
@@ -97,12 +98,16 @@
         <%= image_tag("spree/product/product-warranty.png", class: "col-xs-12") %>
       </div>
 
-      <button class="btn checkout-btn btn-lg btn-primary btn-block disabled" id="checkout-pay-btn">
-        Pay &nbsp;
-        <span class="checkout-total">
-          <%= number_to_currency( @order.total ) %>
-        </span>
-      </button>
+      <%# Pay button container required for the shake effect %>
+      <div id="pay-button-container">
+        <button class="btn checkout-btn btn-lg btn-primary btn-block" id="checkout-pay-btn">
+          <span class="checkout-total" id="button-price">
+            Pay&nbsp;<%= number_to_currency( @order.total ) %>
+          </span>
+          <%# Displays when form is invalid %>
+          <span id="need-info-message">Missing required info</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>

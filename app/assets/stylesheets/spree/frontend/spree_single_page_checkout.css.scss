@@ -216,7 +216,6 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   border: none;
   color: #FFF;
   @include borderRadius(3px);
-  font-size: 1.2em;
   line-height: 100%;
   outline: none;
   padding: .6875rem .625rem;
@@ -228,6 +227,7 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     background: #0079c1;
   }
 }
+
 .checkbox, .chckbox-box {
   font-size: 1.12em;
 }
@@ -332,4 +332,16 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
 
 #coupon-message {
   color: #f65252;
+}
+
+#need-info-message {
+  // font-size: 1rem;
+  display: none;
+  color: #f65252;
+  text-transform: uppercase;
+}
+
+.need-info {
+  border: 2px solid #f65252 !important;
+  background-color: white !important;
 }
