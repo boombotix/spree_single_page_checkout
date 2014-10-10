@@ -22,6 +22,32 @@ if (Spree === undefined) {
 // Namespace the functions of the single page checkout to prevent possible collisions
 Spree.singlePageCheckout = function() {};
 
+Spree.singlePageCheckout.checkCompleteForm = function() {
+  // Checks validity of both address and payment forms, and makes sure the order state is in 'payment'
+  if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.addressFormValid && Spree.singlePageCheckout.state == 'payment') {
+    Spree.singlePageCheckout.readyForm();
+  }
+  else {
+    Spree.singlePageCheckout.disableForm();
+  }
+};
+
+// Activates the pay button
+Spree.singlePageCheckout.readyForm = function() {
+  $('#checkout-pay-btn').removeClass('disabled');
+  $('#checkout-pay-btn').unbind('click').on('click', function() {
+    // Remove value from field to prevent submisson
+    // of invalid coupon or double submission of valid code
+    $('#coupon_code').val('');
+    $('#payment-form').submit();
+  });
+};
+
+// Disables the pay button
+Spree.singlePageCheckout.disableForm = function() {
+  $('#checkout-pay-btn').addClass('disabled');
+};
+
 // Listen to inputs on the address box. When it has
 // been completely filled out, make an AJAX call to the
 // Spree API to continue.
@@ -39,14 +65,8 @@ Spree.singlePageCheckout.checkoutAddress = function() {
 
       // Must be true to activate Pay button
       Spree.singlePageCheckout.addressFormValid = true;
-      if (Spree.singlePageCheckout.paymentFormValid) {
-        $('#checkout-pay-btn').removeClass('disabled');
-        $('#checkout-pay-btn').unbind('click').on('click', function() {
-          // Remove value from field to prevent submisson
-          // of invalid coupon or double submission of valid code
-          $('#coupon_code').val('');
-          $('#payment-form').submit();
-        });
+      if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.state == 'payment') {
+        Spree.singlePageCheckout.readyForm();
       }
 
       // prepare some of the data:
@@ -87,7 +107,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
       // Keeps pay button disabled or makes it
       // disabled if it has already been activated
       Spree.singlePageCheckout.addressFormValid = false;
-      $('#checkout-pay-btn').addClass('disabled');
+      Spree.singlePageCheckout.disableForm();
     }
   };
 
@@ -240,6 +260,9 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
   if (data.payments.length > 0) {
     Spree.singlePageCheckout.payment = true;
   }
+
+  // Run validation check when delivery options come in
+  Spree.singlePageCheckout.checkCompleteForm();
 };
 
 // Make an API call when the user selects their delivery options
@@ -302,30 +325,15 @@ Spree.singlePageCheckout.checkoutPayment = function() {
       }
       else {
         Spree.singlePageCheckout.paymentFormValid = false;
-        $('#checkout-pay-btn').addClass('disabled');
       }
-
-      if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.addressFormValid) {
-        $('#checkout-pay-btn').removeClass('disabled');
-        $('#checkout-pay-btn').unbind('click').on('click', function() {
-          // Remove value from field to prevent submisson
-          // of invalid coupon or double submission of valid code
-          $('#coupon_code').val('');
-          $('#payment-form').submit();
-        });
-      }
-      else {
-        // Disable pay button in case button was already activated prior
-        $('#checkout-pay-btn').addClass('disabled');
-      }
-
+      Spree.singlePageCheckout.checkCompleteForm();
     });
   } else {
     $('#checkout-pay-btn').removeClass('disabled');
   }
 };
 
-// Grabs coupon code for an API call
+// Allows coupon entry and grabs coupon code for an API call
 Spree.singlePageCheckout.checkoutCoupon = function() {
   var couponCode = $('#coupon_code');
   if (Spree.singlePageCheckout.state) {
@@ -409,7 +417,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
         }
       }
     },
-    error: function(response, b, c ) {
+    error: function(response, b, c) {
       Spree.singlePageCheckout.errorHandler(response,b,c);
     }
   });
