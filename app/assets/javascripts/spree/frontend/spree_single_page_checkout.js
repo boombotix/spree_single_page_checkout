@@ -445,10 +445,129 @@ Spree.singlePageCheckout.errorHandler = function(apiResponse, b, c) {
   $('#address_state_name').addClass('validation-error');
 };
 
+
+Spree.singlePageCheckout.loadAddons = function() {
+    var url = '/api/addons';
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        data: { 'order_id': Spree.current_order_id },
+        success: Spree.singlePageCheckout.loadAddonsSuccess,
+        error: function(response) {
+            console.log(response);
+        }
+    });
+};
+
+Spree.singlePageCheckout.loadAddonsSuccess = function(response) {
+    if (response.count > 0) {
+        var div = document.createElement('p');
+        var text = document.createTextNode('Accessories: ');
+
+        div.appendChild(text);
+        $('.checkout-addons-header').append(div);
+
+        $.each(response.addons, function(idx) {
+            var addon = response.addons[idx];
+            Spree.singlePageCheckout.createAddonHTML(addon);
+        });
+    }
+}
+
+Spree.singlePageCheckout.createAddonHTML = function(addon) {
+    var div = document.createElement('div');
+    var paragraph = document.createElement('p');
+    var label = document.createElement('label');
+    var input = document.createElement('input');
+    var icon = document.createElement('i');
+    var img = document.createElement('img');
+    var text = document.createTextNode(addon.name + ' (+ ' + addon.display_price + ' )');
+    var paraText = document.createTextNode('Accessories: ');
+
+    div.className = 'checkbox';
+    input.setAttribute('value', addon.id);
+    input.setAttribute('style', 'display: none;');
+    label.setAttribute('for', 'checkout_addon' + addon.id);
+
+    icon.className = 'fa fa-square-o';
+    img.src = addon.image_url;
+    img.alt = addon.description;
+
+    paragraph.appendChild(paraText);
+    label.appendChild(icon);
+    label.appendChild(img);
+    label.appendChild(text);
+    div.appendChild(input);
+    div.appendChild(label);
+
+    // Append element to the DOM
+    $('.checkout-addons').append(div);
+};
+
+Spree.singlePageCheckout.removeLineItem = function(itemId) {
+    Spree.singlePageCheckout.lineItemApiRequest(itemId, 'DELETE');
+};
+
+Spree.singlePageCheckout.addLineItem = function(itemId) {
+    Spree.singlePageCheckout.lineItemApiRequest(itemId, 'POST');
+};
+
+Spree.singlePageCheckout.lineItemApiRequest = function(itemId, method) {
+    var url = '/api/orders/' + Spree.current_order_id + '/line_items';
+    var data = {};
+    if (method === 'DELETE') {
+        url = url + '/' + itemId;
+    } else {
+        data.order_token = Spree.current_order_token;
+        data.line_item =  {
+            "variant_id": itemId,
+            "quantity": 1
+        }
+    }
+
+    $.ajax({
+        url: url,
+        method: method,
+        dataType: 'json',
+        data: data,
+        headers: { 'X-Spree-Token': Spree.current_order_token },
+        success: function(response) {
+            console.log(response);
+            // THIS IS A HACK.  We should refactor to make this modular/elegant
+            // (because eww)
+            Spree.singlePageCheckout.apiRequest({});
+        },
+        error: function(response) {
+            // TODO: Alert on error?
+            console.log(response);
+        }
+    });
+};
+
+
 $(document).ready(function() {
 
   // Only execute if specific page loads
   if ($('#checkout-content').length > 0) {
+
+    $('.checkout-addons').unbind('click').on('click', '.checkbox label', function(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+
+      var thisElement = $(this);
+      var itemId = thisElement.siblings('input').attr('value');
+
+      // We should probably store these in a data structure instead of relying
+      // on the CSS class, but this works for now.
+      if (thisElement.children('i').hasClass('fa-square-o')) {
+        Spree.singlePageCheckout.addLineItem(itemId);
+        thisElement.children('i').removeClass('fa-square-o').addClass('fa-check-square-o');
+      } else {
+        Spree.singlePageCheckout.removeLineItem(itemId);
+        thisElement.children('i').removeClass('fa-check-square-o').addClass('fa-square-o');
+      }
+    });
 
     $('.checkout-shipping').unbind('click').on('click', '.checkbox label', function(e) {
       e.preventDefault();
@@ -561,6 +680,9 @@ $(document).ready(function() {
 
     // Run once when page loads
     Spree.singlePageCheckout.checkoutCountry();
+
+    // Load 'accessories' section
+    Spree.singlePageCheckout.loadAddons();
 
     // Check if promo has been entered upon page refresh
     if ($('.promotion-label').length > 0) {
