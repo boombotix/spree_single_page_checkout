@@ -452,7 +452,8 @@ Spree.singlePageCheckout.loadAddons = function() {
         url: url,
         method: 'GET',
         dataType: 'json',
-        data: { 'order_id': Spree.current_order_id },
+        data: { 'order_id': Spree.current_order_id,
+                'order_token': Spree.current_order_token },
         success: Spree.singlePageCheckout.loadAddonsSuccess,
         error: function(response) {
             console.log(response);
