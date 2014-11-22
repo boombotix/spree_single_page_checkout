@@ -49,13 +49,13 @@
         </div>
       <% end %>
 
-      <%# Addon items %>
+      <%# Addon items. Elements inside are generated via the JS file. %>
       <div class="checkout-addons-header row">
       </div>
       <div class="checkout-addons row">
       </div>
 
-      <%# Shipping / Delivery %>
+      <%# Shipping / Delivery. Elements inside are generated via the JS file. %>
       <div class="checkout-shipping row">
       </div>
 
@@ -101,7 +101,7 @@
 
       <%# Warranty icon and link %>
       <div class="device-warranty-icons row warranty">
-        <%= image_tag("spree/product/product-warranty.png", class: "col-xs-12") %>
+        <%= image_tag("spree/product/product-warranty.png", class: "col-xs-12 col-md-8 warranty-icon") %>
       </div>
 
       <%# Pay button container required for the shake effect %>

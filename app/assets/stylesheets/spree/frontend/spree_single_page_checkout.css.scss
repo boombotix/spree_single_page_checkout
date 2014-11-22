@@ -345,3 +345,16 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
   border: 2px solid #f65252 !important;
   background-color: white !important;
 }
+
+.accessory-img {
+  width: 6.25rem;
+  margin-right: 1rem;
+}
+
+.warranty-icon {
+  left: 50%;
+  // To horizontally center (margin left/right: auto was not working)
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+}

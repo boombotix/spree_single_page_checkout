@@ -170,6 +170,13 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
   // Clear any old data
   $('.checkout-shipping').html('');
 
+  // Put header "Shipping"
+  var div = document.createElement('p');
+  var text = document.createTextNode('Shipping: ');
+
+  div.appendChild(text);
+  $('.checkout-shipping').append(div);
+
   // Update the shipping options
   var shipment_info;
   if (Spree.singlePageCheckout.shipment_id) {
@@ -494,6 +501,7 @@ Spree.singlePageCheckout.createAddonHTML = function(addon) {
     icon.className = 'fa fa-square-o';
     img.src = addon.image_url;
     img.alt = addon.description;
+    img.className = 'accessory-img';
 
     paragraph.appendChild(paraText);
     label.appendChild(icon);
