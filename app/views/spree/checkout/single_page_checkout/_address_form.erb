@@ -27,7 +27,8 @@
     </div> <%# .row %>
     <div class="row middle-row">
       <div class="col-xs-12 col-sm-8 col-md-8" id="states-container">
-        <%= f.collection_select :state_name, f.object.country.states.sort, :name, :name, {include_blank: true}, {class: 'form-control state', required: true, autocomplete: 'region'} %>
+        <% state_name = f.object.state ? f.object.state.name : nil %>
+        <%= f.collection_select :state_name, f.object.country.states.sort, :name, :name, { selected: state_name, include_blank: true }, { class: 'form-control state', required: true, autocomplete: 'region', placeholder: 'State' } %>
       </div>
       <div class="col-xs-12 col-sm-4 col-md-4 right-col">
         <%= f.text_field :zipcode, required: true, class: 'form-control zipcode', placeholder: 'Zip', autocomplete: 'postal-code' %>

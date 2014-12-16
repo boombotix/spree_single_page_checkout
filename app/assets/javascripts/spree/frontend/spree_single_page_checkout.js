@@ -635,9 +635,6 @@ $(document).ready(function() {
     // listen for changes on the payments box
     Spree.singlePageCheckout.checkoutPayment();
 
-    // Run once when page loads
-    Spree.singlePageCheckout.checkoutCountry();
-
     // Load 'accessories' section
     Spree.singlePageCheckout.loadAddons();
 
