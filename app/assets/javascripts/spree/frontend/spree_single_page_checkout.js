@@ -353,6 +353,13 @@ Spree.singlePageCheckout.couponMessageCreate = function(message) {
 
 // function for making Spree API calls
 Spree.singlePageCheckout.apiRequest = function(data) {
+  // Display a loading message while the API call is in progress.
+  $('#line-items').html(
+    '<div class="checkout-loading">' +
+    '<i class="fa fa-gear fa-spin fa-4x centered"></i>' +
+    '<span>Updating your order...</span></div>'
+  );
+
   var url = '/api/checkouts/' + Spree.current_order_id ;
   data.order_token = Spree.current_order_token;
   $.ajax({

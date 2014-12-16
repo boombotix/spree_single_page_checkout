@@ -358,3 +358,18 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
   -webkit-transform: translateX(-50%);
   -moz-transform: translateX(-50%);
 }
+
+.checkout-loading {
+  text-align: center;
+  position: relative;
+  .fa {
+    color: #ccc;
+  }
+  span {
+    font-size: 2em;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0.5em;
+  }
+}
