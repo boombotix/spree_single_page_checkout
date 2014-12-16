@@ -1,4 +1,10 @@
 // the installer will append this file to the app vendored assets here: vendor/assets/javascripts/spree/frontend/all.js'
+//= require handlebars-v2.0.0
+//= require jquery.payment
+//= require jquery.h5validate
+//= require jquery-ui-autocomplete.min
+//= require jquery-ui-effect-shake.min
+//= require jquery.select-to-autocomplete.min
 
 // ================================================= //
 //  Javascript  for Single Page Checkout extension   //
@@ -9,18 +15,8 @@ if (Spree === undefined) {
   var Spree = {};
 }
 
-// *************************
-// NOTE: The single-page checkout is currently coded to only
-// handle a single shipment per order.
-// *************************
-
-// The Spree Checkout pattern requires that a checkout
-// moves through different states: address, delivery,
-// payment, confirm, and complete. API calls must be
-// made in this order.
-
 // Namespace the functions of the single page checkout to prevent possible collisions
-Spree.singlePageCheckout = function() {};
+Spree.singlePageCheckout = {};
 
 Spree.singlePageCheckout.checkCompleteForm = function() {
   // Checks validity of both address and payment forms, and makes sure the order state is in 'payment'
@@ -167,68 +163,23 @@ Spree.singlePageCheckout.checkoutCountry = function() {
 
 // update the order summary section after a successful request
 Spree.singlePageCheckout.updateOrderSummary = function(data) {
-  // Clear any old data
-  $('.checkout-shipping').html('');
 
-  // Put header "Shipping"
-  var div = document.createElement('p');
-  var text = document.createTextNode('Shipping: ');
-
-  div.appendChild(text);
-  $('.checkout-shipping').append(div);
+  // Handlebars helper to check if two values are equal
+  Handlebars.registerHelper('ifEql', function(value1, value2, options) {
+    if(value1 === value2) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
 
   // Update the shipping options
-  var shipment_info;
-  if (Spree.singlePageCheckout.shipment_id) {
-    $.each(data.shipments, function(key, value) {
-      if (value.id == Spree.singlePageCheckout.shipment_id) {
-        shipment_info = value;
-      }
-    });
-  }
-
-  if (shipment_info === undefined) {
-    shipment_info = data.shipments[0];
-    Spree.singlePageCheckout.shipment_id = data.shipments[0].id;
-  }
-
-  var selected_shipping_rate = shipment_info.selected_shipping_rate ? shipment_info.selected_shipping_rate.id : null;
-
-  if (shipment_info.shipping_rates.length >= 1) {
-    for(var i = 0; i < shipment_info.shipping_rates.length; i++) {
-
-      // Construct a new element for each shipping option
-      var div = document.createElement('div');
-      var input = document.createElement('input');
-      var label = document.createElement('label');
-      var icon = document.createElement('i');
-      var text = document.createTextNode(shipment_info.shipping_rates[i].name + ' (+ ' + shipment_info.shipping_rates[i].display_cost + ' )');
-      var shipment_rate_id = shipment_info.shipping_rates[i].id;
-      var shipment_id = shipment_info.id;
-
-      div.className = 'checkbox';
-      input.setAttribute('type', 'radio');
-      input.setAttribute('name', 'checkout_shipping');
-      input.setAttribute('shipment', shipment_id);
-      input.setAttribute('val', shipment_rate_id);
-      input.id = 'checkout_shipping' + shipment_rate_id;
-      label.setAttribute('for', 'checkout_shipping' + shipment_rate_id);
-      if (selected_shipping_rate == shipment_rate_id) {
-        icon.className = 'fa fa-check-square-o';
-      } else {
-        icon.className = 'fa fa-square-o';
-      }
-
-      label.appendChild(icon);
-      label.appendChild(text);
-
-      div.appendChild(input);
-      div.appendChild(label);
-
-      // Append shipping option element to the DOM
-      $('.checkout-shipping').append(div);
-    }
-  }
+  var shipmentTemplate = Handlebars.compile($('#checkout-shipment-template').html());
+  $('#line-items').html('');
+  $.each(data.shipments, function(idx, shipment) {
+    var rendered = shipmentTemplate({shipment: shipment, number: idx + 1});
+    $('#line-items').append(rendered);
+  });
 
   // Update line_item promotions
   var items = data.line_items;
@@ -416,19 +367,8 @@ Spree.singlePageCheckout.apiRequest = function(data) {
       // is called with just that data. updateOrderSummary will only
       // be called if shipment data exists within the response
       if (Object.keys(response).indexOf('shipments') > -1) {
-        // Delivery state should only exist temporarily. When delivery options
-        // get pulled in, there is already a pre-selected shipping rate. Order
-        // should then advance to 'payment' state.
-        if (response.state == 'delivery') {
-          var rate_id = response.shipments[0].selected_shipping_rate.id;
-          Spree.singlePageCheckout.shipment_id = response.shipments[0].id;
-          Spree.singlePageCheckout.checkoutDelivery(rate_id, Spree.singlePageCheckout.shipment_id);
-        }
-        else {
-          Spree.singlePageCheckout.updateOrderSummary(response);
-        }
-      }
-      else {
+        Spree.singlePageCheckout.updateOrderSummary(response);
+      } else {
         // Invalid coupons will still update shipping rate ID's on the
         // backend so another API call must be made to bring the updated
         // ID's onto the page.
@@ -481,7 +421,7 @@ Spree.singlePageCheckout.loadAddonsSuccess = function(response) {
             Spree.singlePageCheckout.createAddonHTML(addon);
         });
     }
-}
+};
 
 Spree.singlePageCheckout.createAddonHTML = function(addon) {
     var div = document.createElement('div');
@@ -532,7 +472,7 @@ Spree.singlePageCheckout.lineItemApiRequest = function(itemId, method) {
         data.line_item =  {
             "variant_id": itemId,
             "quantity": 1
-        }
+        };
     }
 
     $.ajax({
@@ -557,6 +497,14 @@ Spree.singlePageCheckout.lineItemApiRequest = function(itemId, method) {
 
 $(document).ready(function() {
 
+  function matchGeoData(address_component, type) {
+    if (address_component.types.indexOf(type) !== -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // Only execute if specific page loads
   if ($('#checkout-content').length > 0) {
 
@@ -578,30 +526,23 @@ $(document).ready(function() {
       }
     });
 
-    $('.checkout-shipping').unbind('click').on('click', '.checkbox label', function(e) {
+    // SHIPMENT METHOD: Listens for clicks on shipment methods and makes an API
+    // request when detected.
+    $('#line-items').on('click', '.checkbox label', function(e) {
       e.preventDefault();
       e.stopPropagation();
 
       var rate_id = $(this).siblings('input').attr('val');
       var shipment_id = $(this).siblings('input').attr('shipment');
 
-      Spree.singlePageCheckout.shipment_id = shipment_id;
       Spree.singlePageCheckout.checkoutDelivery(rate_id, shipment_id);
 
-      if ($(this).children('i').hasClass('fa-square-o')) {
-        $(this).children('i').removeClass('fa-square-o').addClass('fa-check-square-o');
-      } else {
-        $(this).children('i').removeClass('fa-check-square-o').addClass('fa-square-o');
-      }
+      // Displays a spinning gear in place of the checkbox while the AJAX call
+      // is run.
+      $(this).children('i').
+        removeClass('fa-square-o fa-check-square-o').
+        addClass('fa-gear fa-spin');
     });
-
-    function matchGeoData(address_component, type) {
-      if (address_component.types.indexOf(type) !== -1) {
-        return true;
-      } else {
-        return false;
-      }
-    }
 
     var geoSuccessHandler = function(position) {
       var lat = position.coords.latitude,

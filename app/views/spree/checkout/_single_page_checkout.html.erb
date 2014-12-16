@@ -2,11 +2,6 @@
 
 <%= content_for :head do %>
   <%= stylesheet_link_tag 'jquery-ui-autocomplete.min' %>
-  <%= javascript_include_tag 'jquery.payment' %>
-  <%= javascript_include_tag 'jquery.h5validate' %>
-  <%= javascript_include_tag 'jquery-ui-autocomplete.min' %>
-  <%= javascript_include_tag 'jquery-ui-effect-shake.min' %>
-  <%= javascript_include_tag 'jquery.select-to-autocomplete.min' %>
   <%= javascript_include_tag 'https://maps.google.com/maps/api/js?sensor=false' %>
 <% end %>
 
@@ -30,6 +25,7 @@
   <div class="col-xs-12 col-sm-7 col-md-7">
     <h2>Order Summary</h2>
     <div class="panel-box" id="checkout-summary">
+      <div id="line-items">
       <% @order.line_items.each do |item| %>
         <div class="row">
           <div class="col-xs-2 col-sm-2 col-md-2">
@@ -48,6 +44,8 @@
           </div>
         </div>
       <% end %>
+      </div>
+
 
       <%# Addon items. Elements inside are generated via the JS file. %>
       <div class="checkout-addons-header row">
@@ -55,9 +53,6 @@
       <div class="checkout-addons row">
       </div>
 
-      <%# Shipping / Delivery. Elements inside are generated via the JS file. %>
-      <div class="checkout-shipping row">
-      </div>
 
       <%# Price adjustments / promotions %>
       <%# For line-item promotions %>
@@ -117,3 +112,45 @@
     </div>
   </div>
 </div>
+
+<%# Mustache Template to fill in line_items into shipments after first load %>
+<script id="checkout-shipment-template" type="text/x-handlebars-template">
+  Shipment #{{number}}
+  {{#each shipment.manifest}}
+    <div class="row">
+      <div class="col-xs-2 col-sm-2 col-md-2">
+        <img src="{{variant.images.[0].mini_url}}" alt="{{variant.name}}"></img>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-2 col-sm-1 col-md-1">
+        {{quantity}}
+      </div>
+      <div class="col-xs-10 col-sm-8 col-md-8">
+        {{variant.name}}
+      </div>
+      <div class="col-xs-12 col-sm-3 col-md-3 right-text">
+        {{variant.display_price}}
+      </div>
+    </div>
+  {{/each}}
+  <div class="checkout-shipping row">
+    <p>Shipping: </p>
+    {{#each shipment.shipping_rates}}
+      <div class="checkbox">
+        <input type="radio" name="checkout_shipping" shipment="{{../shipment.id}}"
+          val="{{id}}" id="checkout_shipping{{id}}" />
+        <label for="checkout_shipping{{id}}">
+        {{#ifEql ../shipment.selected_shipping_rate.id this.id}}
+          <i class="fa fa-check-square-o"></i>
+        {{else}}
+          <i class="fa fa-square-o"></i>
+        {{/ifEql}}
+          {{name}} &nbsp; ( +{{display_cost}} )
+        </label>
+      </div>
+    {{/each}}
+  </div>
+
+  <hr />
+</script>
