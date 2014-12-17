@@ -356,7 +356,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
   // Display a loading message while the API call is in progress.
   $('#line-items').html(
     '<div class="checkout-loading">' +
-    '<i class="fa fa-gear fa-spin fa-4x centered"></i>' +
+    '<i class="fa fa-gear fa-spin fa-4x"></i>' +
     '<span>Updating your order...</span></div>'
   );
 
@@ -489,14 +489,12 @@ Spree.singlePageCheckout.lineItemApiRequest = function(itemId, method) {
         data: data,
         headers: { 'X-Spree-Token': Spree.current_order_token },
         success: function(response) {
-            console.log(response);
             // THIS IS A HACK.  We should refactor to make this modular/elegant
             // (because eww)
             Spree.singlePageCheckout.apiRequest({});
         },
         error: function(response) {
             // TODO: Alert on error?
-            console.log(response);
         }
     });
 };
@@ -519,18 +517,10 @@ $(document).ready(function() {
       evt.preventDefault();
       evt.stopPropagation();
 
-      var thisElement = $(this);
-      var itemId = thisElement.siblings('input').attr('value');
+      var itemId = $(this).siblings('input').attr('value');
 
-      // We should probably store these in a data structure instead of relying
-      // on the CSS class, but this works for now.
-      if (thisElement.children('i').hasClass('fa-square-o')) {
-        Spree.singlePageCheckout.addLineItem(itemId);
-        thisElement.children('i').removeClass('fa-square-o').addClass('fa-check-square-o');
-      } else {
-        Spree.singlePageCheckout.removeLineItem(itemId);
-        thisElement.children('i').removeClass('fa-check-square-o').addClass('fa-square-o');
-      }
+      $(this).parent().fadeOut();
+      Spree.singlePageCheckout.addLineItem(itemId);
     });
 
     // SHIPMENT METHOD: Listens for clicks on shipment methods and makes an API
