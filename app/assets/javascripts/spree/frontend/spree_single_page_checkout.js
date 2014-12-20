@@ -181,6 +181,21 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
     $('#line-items').append(rendered);
   });
 
+  // If there are customizers, replace component line items with a single line
+  var customizerTemplate = Handlebars.compile($('#customizer-line-item').html());
+  if (data.customizers) {
+    $.each(data.customizers, function(i, customizer) {
+      // Find the shipment the customizer belongs in
+      var shipmentEl = $('[x-shipment-number="' + customizer.shipment_number + '"]');
+      // Build the new HTML for the customizer
+      var rendered = customizerTemplate(customizer);
+      // Append the new HTML to the shipment
+      shipmentEl.find('.checkout-shipping').before(rendered);
+      // Remove any rows that are not a customizer or shipping info
+      shipmentEl.find('.row').not('.checkout-shipping, .customizer').remove();
+    });
+  }
+
   // Update line_item promotions
   var items = data.line_items;
   $.each(items, function(index, item) {
@@ -362,6 +377,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
 
   var url = '/api/checkouts/' + Spree.current_order_id ;
   data.order_token = Spree.current_order_token;
+  data.template = 'spree/api/orders/customizer_order';
   $.ajax({
     url: url,
     method: 'PUT',
