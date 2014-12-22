@@ -385,6 +385,10 @@ Spree.singlePageCheckout.apiRequest = function(data) {
     data: data,
     headers: { 'X-Spree-Token': Spree.current_order_token },
     success: function(response) {
+      // We can auto-advance to the 'payment' state from delivery.
+      if (response.state == 'delivery') {
+        Spree.singlePageCheckout.apiRequest({});
+      }
       // Invalid coupons will only return an error message, which
       // removes all shipping selections from the page if updateOrderSummary
       // is called with just that data. updateOrderSummary will only
