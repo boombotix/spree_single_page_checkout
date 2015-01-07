@@ -2,6 +2,7 @@
 Placeholder manifest file.
 the installer will append this file to the app vendored assets here: 'vendor/assets/stylesheets/spree/frontend/all.css'
 */
+//= require jquery.ui.autocomplete
 
 $boombotixRegular: "TwCenMT-Regular", "Futura", "Century Gothic", Arial, sans-serif !default;
 $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !default;

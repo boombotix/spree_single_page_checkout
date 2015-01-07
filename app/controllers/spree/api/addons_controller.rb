@@ -1,6 +1,8 @@
 module Spree
   module Api
     class AddonsController < Spree::Api::BaseController
+      skip_filter :authenticate_user, :load_user
+
       def index
         # re-implement this with your own in a decorator; this placeholder
         # should allow the basic implementation to stand

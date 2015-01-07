@@ -1,7 +1,6 @@
 <% @page_title = 'REVIEW YOUR ORDER' %>
 
 <%= content_for :head do %>
-  <%= stylesheet_link_tag 'jquery-ui-autocomplete.min' %>
   <%= javascript_include_tag 'https://maps.google.com/maps/api/js?sensor=false' %>
 <% end %>
 
@@ -94,10 +93,6 @@
         <div class="col-xs-6 col-sm-3 col-md-3 right-text checkout-total"><%= number_to_currency( @order.total ) %></div>
       </div>
 
-      <%# Warranty icon and link %>
-      <div class="device-warranty-icons row warranty">
-        <%= image_tag("spree/product/product-warranty.png", class: "col-xs-12 col-md-8 warranty-icon") %>
-      </div>
 
       <%# Pay button container required for the shake effect %>
       <div id="pay-button-container">

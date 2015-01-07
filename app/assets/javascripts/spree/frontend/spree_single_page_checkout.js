@@ -2,7 +2,7 @@
 //= require handlebars-v2.0.0
 //= require jquery.payment
 //= require jquery.h5validate
-//= require jquery-ui-autocomplete.min
+//= require jquery.ui.autocomplete
 //= require jquery-ui-effect-shake.min
 //= require jquery.select-to-autocomplete.min
 
@@ -194,6 +194,16 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
     }
   });
 
+  // Hide the Spree 'No Image Available' image
+  var imageElements = $('#line-items').find('img');
+  imageElements.each(function() {
+    var noImageRegExp = /noimage/;
+    var imgEl = $(this);
+    if (noImageRegExp.test(imgEl.attr('src')) || !imgEl.attr('src')) {
+      imgEl.hide();
+    }
+  });
+
   // Update whole order promotions
   var adjustments = data.adjustments;
   if (adjustments.length > 0) {
@@ -369,6 +379,10 @@ Spree.singlePageCheckout.apiRequest = function(data) {
     data: data,
     headers: { 'X-Spree-Token': Spree.current_order_token },
     success: function(response) {
+      // We can auto-advance to the 'payment' state from delivery.
+      if (response.state == 'delivery') {
+        Spree.singlePageCheckout.apiRequest({});
+      }
       // Invalid coupons will only return an error message, which
       // removes all shipping selections from the page if updateOrderSummary
       // is called with just that data. updateOrderSummary will only
@@ -406,8 +420,7 @@ Spree.singlePageCheckout.loadAddons = function() {
         url: url,
         method: 'GET',
         dataType: 'json',
-        data: { 'order_id': Spree.current_order_id,
-                'order_token': Spree.current_order_token },
+        data: {},
         success: Spree.singlePageCheckout.loadAddonsSuccess,
         error: function(response) {
             console.log(response);
@@ -418,7 +431,7 @@ Spree.singlePageCheckout.loadAddons = function() {
 Spree.singlePageCheckout.loadAddonsSuccess = function(response) {
     if (response.count > 0) {
         var div = document.createElement('p');
-        var text = document.createTextNode('Accessories: ');
+        var text = document.createTextNode('You might also like: ');
 
         div.appendChild(text);
         $('.checkout-addons-header').append(div);
@@ -446,13 +459,15 @@ Spree.singlePageCheckout.createAddonHTML = function(addon) {
     label.setAttribute('for', 'checkout_addon' + addon.id);
 
     icon.className = 'fa fa-square-o';
-    img.src = addon.image_url;
-    img.alt = addon.description;
-    img.className = 'accessory-img';
+    if (addon.image_url) {
+      img.src = addon.image_url;
+      img.alt = addon.description;
+      img.className = 'accessory-img';
+    }
 
     paragraph.appendChild(paraText);
     label.appendChild(icon);
-    label.appendChild(img);
+    if (addon.image_url) { label.appendChild(img); }
     label.appendChild(text);
     div.appendChild(input);
     div.appendChild(label);
@@ -491,7 +506,9 @@ Spree.singlePageCheckout.lineItemApiRequest = function(itemId, method) {
         success: function(response) {
             // THIS IS A HACK.  We should refactor to make this modular/elegant
             // (because eww)
+          if (Spree.singlePageCheckout.state !== 'address') {
             Spree.singlePageCheckout.apiRequest({});
+          }
         },
         error: function(response) {
             // TODO: Alert on error?
@@ -513,14 +530,30 @@ $(document).ready(function() {
   // Only execute if specific page loads
   if ($('#checkout-content').length > 0) {
 
+    // The initial state of the checkout should be 'address'
+    Spree.singlePageCheckout.state = 'address';
+
+    // ADDONS: Listens for clicks on addon items
     $('.checkout-addons').unbind('click').on('click', '.checkbox label', function(evt) {
       evt.preventDefault();
       evt.stopPropagation();
 
-      var itemId = $(this).siblings('input').attr('value');
+      var el = $(this);
+      var itemId = el.siblings('input').attr('value');
 
-      $(this).parent().fadeOut();
-      Spree.singlePageCheckout.addLineItem(itemId);
+      if (el.attr('selected')) {
+        Spree.singlePageCheckout.removeLineItem(itemId);
+        el.attr('selected', false);
+        el.children('i').
+          addClass('fa-square-o').
+          removeClass('fa-check-square-o');
+      } else {
+        Spree.singlePageCheckout.addLineItem(itemId);
+        el.attr('selected', true);
+        el.children('i').
+          addClass('fa-check-square-o').
+          removeClass('fa-square-o');
+      }
     });
 
     // SHIPMENT METHOD: Listens for clicks on shipment methods and makes an API
@@ -529,14 +562,15 @@ $(document).ready(function() {
       e.preventDefault();
       e.stopPropagation();
 
-      var rate_id = $(this).siblings('input').attr('val');
-      var shipment_id = $(this).siblings('input').attr('shipment');
+      var el = $(this);
+      var rate_id = el.siblings('input').attr('val');
+      var shipment_id = el.siblings('input').attr('shipment');
 
       Spree.singlePageCheckout.checkoutDelivery(rate_id, shipment_id);
 
       // Displays a spinning gear in place of the checkbox while the AJAX call
       // is run.
-      $(this).children('i').
+      el.children('i').
         removeClass('fa-square-o fa-check-square-o').
         addClass('fa-gear fa-spin');
     });
