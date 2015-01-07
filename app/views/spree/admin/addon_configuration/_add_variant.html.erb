@@ -1,0 +1,19 @@
+<%= render partial: 'spree/admin/variants/autocomplete', :formats => :js %>
+<%= render partial: 'addon_config', formats: [:js] %>
+
+<div id="add-addon-pref" data-hook>
+  <fieldset class="no-border-bottom">
+    <legend align="center"><%= Spree.t(:add_variant_to_addons) %></legend>
+
+    <div data-hook="add_variant_name" class="field twelve columns alpha">
+      <%= label_tag :add_variant_id, Spree.t(:name_or_sku) %>
+      <%= hidden_field_tag :add_variant_id, "", class: 'variant-autocomplete fullwidth' %>
+    </div>
+
+    <%= content_tag 'div', id: 'addon-update-form' do %>
+      <%= render 'form' %>
+    <% end %>
+
+  </fieldset>
+</div>
+

@@ -1,0 +1,29 @@
+
+<table class="addons index" data-hook="addons">
+  <colgroup>
+    <col style="width: 10%;" />
+    <col style="width: 75%;" />
+    <col style="width: 15%;" />
+  </colgroup>
+
+  <thead>
+    <th colspan="2"><%= Spree.t(:name) %></th>
+    <th class="actions">&nbsp;</th>
+  </thead>
+
+  <tbody>
+    <% @addons.each do |addon| %>
+      <tr class="variant">
+        <td class="variant-image">
+          <%= mini_image(addon) %>
+        </td>
+        <td class="variant-name">
+          <%= addon.product.name %>
+        </td>
+        <td class="variant-actions">
+          <%= link_to '', '#', class: 'remove-addon fa fa-trash no-text with-tip', title: 'Remove from addons', :'data-variant-id' => addon.id %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe 'Single Page Checkout', js: true do
   before do
-    create(:credit_card_payment_method)
-    country_zone = create(:zone)
-    @state = create(:state)
-    country_zone.members.create(zoneable: @state.country)
+    addon_config = Spree::SinglePageCheckout::AddonConfiguration.new
+    addon_config.preferred_addon_variants = [
+      warranty.master.id
+    ]
     @address = attributes_for(:address, state: @state)
     @credit_card = attributes_for(:credit_card)
     create(:stock_location)

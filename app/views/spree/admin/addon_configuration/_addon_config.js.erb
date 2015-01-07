@@ -1,0 +1,23 @@
+<script>
+$(document).ready(function() {
+  'use strict';
+
+  $('[data-hook="add_variant_name"]').find('.variant-autocomplete').variantAutocomplete();
+
+  $('#add_variant_id').on('change', function() {
+    var variantId = $('#add_variant_id').val();
+
+    if (variantId) {
+      $('#new-addon-field').val(variantId);
+    }
+  });
+
+  $('#addons').on('click', '.remove-addon', function(e) {
+    e.preventDefault();
+    var variantId = $(this).attr('data-variant-id');
+
+    $('#variant-' + variantId).remove();
+    $('#addon-update-form form').submit();
+  });
+});
+</script>

@@ -1,0 +1,9 @@
+<%= form_tag admin_addons_path, method: :put, remote: true do %>
+  <% @addons.each do |variant| %>
+    <%= hidden_field_tag 'addon[variants][]', variant.id, id: "variant-#{variant.id}" %>
+  <% end %>
+  <%= hidden_field_tag 'addon[variants][]', nil, id: 'new-addon-field' %>
+  <%= button_tag(type: 'submit') do %>
+    <i class="fa fa-plus"></i> Add to Addons
+  <% end %>
+<% end %>
