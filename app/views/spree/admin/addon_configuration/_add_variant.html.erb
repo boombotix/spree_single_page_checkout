@@ -1,4 +1,5 @@
-<%= render partial: 'spree/admin/variants/autocomplete', :formats => :js %>
+<%= javascript_include_tag 'spree/backend/variant_autocomplete' %>
+<%= render partial: 'spree/admin/variants/autocomplete', formats: [:js] %>
 <%= render partial: 'addon_config', formats: [:js] %>
 
 <div id="add-addon-pref" data-hook>

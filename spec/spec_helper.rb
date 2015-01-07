@@ -9,7 +9,6 @@ require 'ffaker'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
-require 'pry'
 
 Capybara.register_driver :poltergeist_debug do |app|
   Capybara::Poltergeist::Driver.new(
@@ -20,16 +19,23 @@ Capybara.register_driver :poltergeist_debug do |app|
   )
 end
 Capybara.javascript_driver = :poltergeist_debug
+Capybara.default_wait_time = 3
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
 # Requires factories defined in spree_core
-require 'spree/testing_support/factories'
-require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/authorization_helpers'
+require 'spree/testing_support/factories'
+require 'spree/testing_support/preferences'
+require 'spree/testing_support/controller_requests'
+require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
+require 'spree/testing_support/order_walkthrough'
+require 'spree/testing_support/capybara_ext'
+
+require 'paperclip/matchers'
 
 # Requires factories defined in lib/spree_single_page_checkout/factories.rb
 require 'spree_single_page_checkout/factories'
@@ -44,14 +50,11 @@ RSpec.configure do |config|
   # visit spree.admin_path
   # current_path.should eql(spree.products_path)
   config.include Spree::TestingSupport::UrlHelpers
+  config.include Spree::TestingSupport::Preferences
+  config.include Spree::TestingSupport::ControllerRequests
+  config.include Spree::TestingSupport::Flash
 
   # == Mock Framework
-  #
-  # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
-  #
-  # config.mock_with :mocha
-  # config.mock_with :flexmock
-  # config.mock_with :rr
   config.mock_with :rspec
   config.color = true
 
@@ -70,10 +73,10 @@ RSpec.configure do |config|
   end
 
   # Before each spec check if it is a Javascript test and switch between using database transactions or not where necessary.
-  # config.before :each do
-  #   DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
-  #   DatabaseCleaner.start
-  # end
+  config.before :each do
+    DatabaseCleaner.strategy = RSpec.current_example.metadata[:js] ? :truncation : :transaction
+    DatabaseCleaner.start
+  end
 
   # After each spec clean the database.
   config.after :each do
@@ -82,4 +85,12 @@ RSpec.configure do |config|
 
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.order = "random"
+
+  config.after(:each, :type => :feature) do
+    missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
+    if missing_translations.any?
+      puts "Found missing translations: #{missing_translations.inspect}"
+      puts "In spec: #{example.location}"
+    end
+  end
 end
