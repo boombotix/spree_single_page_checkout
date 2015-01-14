@@ -62,12 +62,21 @@ describe 'Single Page Checkout', type: :feature, js: true do
     expect(address_val).to eq('8000 Sunset Blvd')
   end
 
-  it 'enables the pay now button on valid payment input' do
-    fill_in_address
-    fill_in_payment
-    wait_for_ajax
-    btn_disabled = page.evaluate_script('$(\'#checkout-pay-btn\').hasClass(\'disabled\');')
-    expect(btn_disabled).to eq(false)
+  context 'when payment info has been filled out' do
+    before do
+      fill_in_address
+      fill_in_payment
+      wait_for_ajax
+    end
+
+    it 'enables the pay now button' do
+      btn_disabled = page.evaluate_script('$(\'#checkout-pay-btn\').hasClass(\'disabled\');')
+      expect(btn_disabled).to eq(false)
+    end
+
+    it 'changes the button text to "PLACE ORDER"' do
+      expect(find('#checkout-pay-btn')).to have_content('PLACE ORDER')
+    end
   end
 
   it 'Displays addons in order summary' do

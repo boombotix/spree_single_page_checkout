@@ -97,9 +97,7 @@
       <%# Pay button container required for the shake effect %>
       <div id="pay-button-container">
         <button class="btn checkout-btn btn-lg btn-primary btn-block" id="checkout-pay-btn">
-          <span class="checkout-total" id="button-price">
-            Pay&nbsp;<%= number_to_currency( @order.total ) %>
-          </span>
+           Pay&nbsp;<span class="checkout-total" id="button-price"><%= number_to_currency( @order.total ) %></span>
           <%# Displays when form is invalid %>
           <span id="need-info-message">Missing required info</span>
         </button>

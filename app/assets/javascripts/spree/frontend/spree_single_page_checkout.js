@@ -20,7 +20,9 @@ Spree.singlePageCheckout = {};
 
 Spree.singlePageCheckout.checkCompleteForm = function() {
   // Checks validity of both address and payment forms, and makes sure the order state is in 'payment'
-  if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.addressFormValid && Spree.singlePageCheckout.state == 'payment') {
+  if (Spree.singlePageCheckout.paymentFormValid &&
+      Spree.singlePageCheckout.addressFormValid &&
+      Spree.singlePageCheckout.state === 'payment') {
     Spree.singlePageCheckout.readyForm();
   }
   else {
@@ -35,7 +37,7 @@ Spree.singlePageCheckout.readyForm = function() {
     // of invalid coupon or double submission of valid code
     $('#coupon_code').val('');
     $('#payment-form').submit();
-  });
+  }).html('PLACE ORDER');
 };
 
 // Disables the pay button
