@@ -24,7 +24,7 @@ describe 'Single Page Checkout', type: :feature, js: true do
   end
 
   before :each do
-    stock_location.stock_items.update_all(count_on_hand: 1)
+    stock_location.stock_items.update_all(count_on_hand: 2)
     add_mug_to_cart
     Spree::Order.last.update_column(:email, "test@example.com")
     click_button "Checkout"
@@ -82,6 +82,19 @@ describe 'Single Page Checkout', type: :feature, js: true do
   it 'Displays addons in order summary' do
     expect(find('.checkout-addons')).
       to have_content(warranty.name)
+  end
+
+  context 'when there is more than one of the same item in a shipment' do
+    before do
+      add_mug_to_cart # Add a second mug to the order
+      click_button 'Checkout'
+      fill_in_address
+      wait_for_ajax
+    end
+
+    it 'displays an amount that is equal to quantity x price' do
+      expect(find('#line-items')).to have_content(mug.price * 2)
+    end
   end
 
   context 'when addon chosen and the address is filled out', order: :defined do

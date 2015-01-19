@@ -175,6 +175,14 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
     }
   });
 
+  // Mutate the data a little bit... we need the total amount for each variable
+  // (price * quantity)
+  $.each(data.shipments, function(i, shipment) {
+    $.each(shipment.manifest, function(j, manifest_item) {
+      manifest_item.display_amount = manifest_item.quantity * manifest_item.variant.price;
+    });
+  });
+
   // Update the shipping options
   var shipmentTemplate = Handlebars.compile($('#checkout-shipment-template').html());
   $('#line-items').html('');
