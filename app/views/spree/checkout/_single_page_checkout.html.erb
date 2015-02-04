@@ -13,7 +13,25 @@
       <% end -%>
 
       <%# Shipping Address Form %>
-      <%= render 'spree/checkout/single_page_checkout/address_form' %>
+      <div class="addressInfo info" id="spc-shipping-address">
+        <h3>Shipping Address</h3>
+        <%= render partial: 'spree/checkout/single_page_checkout/address_form',
+            locals: { address: @order.shipping_address, geolocate: true } %>
+        <div class="spc-billing-toggle-container">
+          <%= check_box_tag 'billing', 'yes', true, class: 'billing-address-toggle' %>
+          <%= label_tag 'billing' do %>
+            <span class='fa fa-check-square-o'></span>
+            Use Same Address For Billing
+          <% end %>
+        </div>
+      </div>
+
+      <%# Billing Address Form %>
+      <div class="addressInfo info" id="spc-billing-address">
+        <h3>Billing Address</h3>
+        <%= render partial: 'spree/checkout/single_page_checkout/address_form',
+            locals: { address: @order.billing_address, geolocate: false } %>
+      </div>
 
       <%# Payment Information %>
       <%= render 'spree/checkout/single_page_checkout/payment_form' %>
@@ -32,7 +50,7 @@
       </button>
     </div>
 
-    <div class="panel-box" id="checkout-summary">
+    <div class="panel-box" id="spc-checkout-summary">
       <div id="line-items">
       <% @order.line_items.each do |item| %>
         <div class="row">

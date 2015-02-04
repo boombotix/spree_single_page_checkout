@@ -1,43 +1,113 @@
-<h3>Shipping Address</h3>
-<div class="addressInfo info">
-  <%= form_for @order.shipping_address, url: api_checkout_path(@order.number), html: { autocomplete: 'on' } do |f|%>
-    <div class="row top-row">
-      <%= f.text_field :full_name, required: true, class: 'form-control name', placeholder: 'Name', autocomplete: 'name' %>
+<%= form_for address, url: spree.api_order_path(@order), html: { autocomplete: 'on' } do |form|%>
+  <div class="row top-row">
+    <%= form.text_field(:full_name,
+      required: true,
+      id: "#{ address.id }-full-name",
+      class: 'form-control name',
+      placeholder: 'Name',
+      autocomplete: 'name'
+    ) %>
+  </div>
+  <div class="row middle-row">
+    <div class="col-md-12">
+      <%= form.collection_select(:country_id,
+        available_countries,
+        :id,
+        :name,
+        { include_blank: true },
+        {
+          id: "#{ address.id }-country-id",
+          class: 'form-control country',
+          required: true,
+          autocomplete: 'country-name'
+        }
+      ) %>
     </div>
+  </div>
     <div class="row middle-row">
-      <div class="col-md-12">
-        <%= f.collection_select :country_id, available_countries, :id, :name, {include_blank: true}, { class: 'form-control country', required: true, autocomplete: 'country-name' } %>
-      </div>
+      <% if geolocate %>
+        <div class="col-xs-10 noPadding">
+          <%= form.text_field(:address1,
+            required: true,
+            id: "#{ address.id }-address1",
+            class: 'form-control street',
+            placeholder: 'Address',
+            autocomplete: 'address-line1'
+          ) %>
+        </div>
+        <div class="col-xs-2 noPadding geoLocator right-col">
+          <i class="fa fa-crosshairs"></i>
+        </div>
+      <% else %>
+        <div class="col-md-12">
+          <%= form.text_field(:address1,
+            required: true,
+            id: "#{ address.id }-address1",
+            class: 'form-control street',
+            placeholder: 'Address',
+            autocomplete: 'address-line1'
+          ) %>
+        </div>
+      <% end %>
     </div>
-    <div class="row middle-row">
-      <div class="col-xs-10 noPadding">
-        <%= f.text_field :address1, required: true, class: 'form-control street', placeholder: 'Address', autocomplete: 'address-line1' %>
-      </div>
-      <div class="col-xs-2 noPadding geoLocator right-col">
-        <i class="fa fa-crosshairs"></i>
-      </div>
+  <div class="row middle-row">
+    <div class="col-xs-12 col-sm-6 col-md-6">
+      <%= form.text_field(:address2,
+        id: "#{ address.id }-address2",
+        class: 'form-control apt',
+        placeholder: 'Address 2',
+        autocomplete: 'address-line2'
+      ) %>
     </div>
-    <div class="row middle-row">
-      <div class="col-xs-12 col-sm-6 col-md-6">
-        <%= f.text_field :address2, class: 'form-control apt', placeholder: 'Address 2', autocomplete: 'address-line2' %>
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-6 right-col">
-        <%= f.text_field :city, required: true, class: 'form-control city', placeholder: 'City', autocomplete: 'address-level2' %>
-      </div>
-    </div> <%# .row %>
-    <div class="row middle-row">
-      <div class="col-xs-12 col-sm-8 col-md-8" id="states-container">
-        <% state_name = f.object.state ? f.object.state.name : nil %>
-        <%= f.collection_select :state_name, f.object.country.states.sort, :name, :name, { selected: state_name, include_blank: true }, { class: 'form-control state', required: true, autocomplete: 'address-level1', placeholder: 'State' } %>
-      </div>
-      <div class="col-xs-12 col-sm-4 col-md-4 right-col">
-        <%= f.text_field :zipcode, required: true, class: 'form-control zipcode', placeholder: 'Zip', autocomplete: 'postal-code' %>
-      </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 right-col">
+      <%= form.text_field(:city,
+        required: true,
+        id: "#{ address.id }-city",
+        class: 'form-control city',
+        placeholder: 'City',
+        autocomplete: 'address-level2'
+      ) %>
     </div>
-    <div class="row bottom-row">
-      <div class="col-md-12">
-        <%= f.phone_field :phone, required: true, class: 'form-control phone', placeholder: 'Phone', autocomplete: 'tel-national' %>
-      </div>
+  </div> <%# .row %>
+  <div class="row middle-row">
+    <div class="col-xs-12 col-sm-8 col-md-8" id="states-container">
+      <% state_name = form.object.state ? form.object.state.name : nil %>
+      <%= form.collection_select(:state_name,
+        form.object.country.states.sort,
+        :name,
+        :name,
+        {
+          selected: state_name,
+          include_blank: true
+        },
+        {
+          id: "#{ address.id }-state-name",
+          class: 'form-control state',
+          required: true,
+          autocomplete: 'address-level1',
+          placeholder: 'State'
+        }
+      ) %>
     </div>
-  <% end %>
-</div>
+    <div class="col-xs-12 col-sm-4 col-md-4 right-col">
+      <%= form.text_field(:zipcode,
+        required: true,
+        id: "#{ address.id }-zipcode",
+        class: 'form-control zipcode',
+        placeholder: 'Zip',
+        autocomplete: 'postal-code'
+      ) %>
+    </div>
+  </div>
+  <div class="row bottom-row">
+    <div class="col-md-12">
+      <%= form.phone_field(:phone,
+        required: true,
+        id: "#{ address.id }-phone",
+        class: 'form-control phone',
+        placeholder: 'Phone',
+        autocomplete: 'tel-national'
+      ) %>
+    </div>
+  </div>
+<% end %>

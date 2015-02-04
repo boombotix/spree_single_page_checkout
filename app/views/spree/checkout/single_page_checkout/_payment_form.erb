@@ -1,37 +1,99 @@
 <h3>Payment Information</h3>
 <div class="paymentInfo info">
   <%= form_tag update_checkout_path(state: 'payment'), { autocomplete: 'on', method: 'patch', id: 'payment-form' } do %>
-    <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="state" value="payment" />
+    <%= hidden_field_tag 'action', 'update' %>
+    <%= hidden_field_tag 'state', 'payment' %>
+
     <div class="row top-row">
-      <input type="hidden" id="payment_method_id" name="order[payments_attributes][][payment_method_id]" value="<%= @order.available_payment_methods.first.id %>" />
-      <input type="text" id="name" class="form-control paymentName" name="payment_source[<%= @order.available_payment_methods.first.id %>][name]" autocomplete="cc-name" placeholder="Cardholder Name" value="<%= session[:payment_details] ? session[:payment_details][:name] : '' %>" required />
+      <%= hidden_field_tag 'order[payments_attributes][][payment_method_id]',
+        @order.available_payment_methods.first.id,
+        id: 'payment_method_id' %>
+      <%= text_field_tag(
+        "payment_source[#{ @order.available_payment_methods.first.id }][name]",
+        "#{ session[:payment_details] ? session[:payment_details][:name] : nil }",
+        {
+          id: 'name',
+          class: 'form-control paymentName',
+          autocomplete: 'cc-name',
+          placeholder: 'Cardholder Name',
+          required: true
+        }
+      ) %>
     </div>
+
     <div class="row middle-row">
       <div class="col-md-12">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-fw fa-credit-card"></i></span>
-          <input type="text" id="number" class="form-control" name="payment_source[<%= @order.available_payment_methods.first.id %>][number]" placeholder="Card Number" autocomplete="cc-number" pattern="\d*" value="<%= session[:payment_details] ? session[:payment_details][:number] : '' %>" required />
-          <input type="hidden" id="cc-type" name="payment_source[<%= @order.available_payment_methods.first.id %>][cc_type]" />
+          <%= text_field_tag(
+            "payment_source[#{ @order.available_payment_methods.first.id }][number]",
+            "#{ session[:payment_details] ? session[:payment_details][:number] : nil }",
+            {
+              id: 'number',
+              class: 'form-control',
+              autocomplete: 'cc-number',
+              placeholder: 'Card Number',
+              pattern: '\d*',
+              required: true
+            }
+          ) %>
+          <%= hidden_field_tag(
+            "payment_source[#{ @order.available_payment_methods.first.id }][cc_type]",
+            nil,
+            { id: 'cc-type' }
+          ) %>
         </div>
       </div>
     </div>
+
     <div class="row middle-row">
       <div class="col-xs-12 col-sm-6 col-md-6">
         <div class="input-group date">
           <span class="input-group-addon"><i class="fa fa-fw fa-calendar-o"></i></span>
-          <input type="text" id="date" class="form-control date" name="payment_source[<%= @order.available_payment_methods.first.id %>][expiry]" placeholder="MM / YY" autocomplete="cc-exp" pattern="\d*" value="<%= session[:payment_details] ? session[:payment_details][:expiry] : '' %>" required />
+          <%= text_field_tag(
+            "payment_source[#{ @order.available_payment_methods.first.id }][expiry]",
+            "#{ session[:payment_details] ? session[:payment_details][:expiry] : nil }",
+            {
+              autocomplete: 'cc-exp',
+              class: 'form-control date',
+              id: 'date',
+              pattern: '\d*',
+              placeholder: 'MM / YY',
+              required: true
+            }
+          ) %>
         </div>
       </div>
+
       <div class="col-xs-12 col-sm-6 col-md-6 right-col">
         <div class="input-group code">
           <span class="input-group-addon"><i class="fa fa-fw fa-lock"></i></span>
-          <input type="text" id="verification_value" class="form-control code" name="payment_source[<%= @order.available_payment_methods.first.id %>][verification_value]" placeholder="CVC" autocomplete="cc-csc" pattern="\d*" required />
+          <%= text_field_tag(
+            "payment_source[#{ @order.available_payment_methods.first.id }][verification_value]",
+            nil,
+            {
+              autocomplete: 'cc-csc',
+              class: 'form-control code',
+              id: 'verification_value',
+              pattern: '\d*',
+              placeholder: 'CVC',
+              required: true
+            }
+          ) %>
         </div>
       </div>
     </div>
+
     <div class="row bottom-row">
-      <input type="text" id="coupon_code" class="form-control coupon" name="order[coupon_code]" placeholder="Promotion Code" />
+      <%= text_field_tag(
+        'order[coupon_code]',
+        nil,
+        {
+          class: 'form-control coupon',
+          id: 'coupon_code',
+          placeholder: 'Promotion Code'
+        }
+      ) %>
     </div>
   <% end %>
   <% session[:payment_details] = nil %>

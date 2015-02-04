@@ -176,7 +176,7 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   h3 {
     font-family: $boombotixRegular;
     text-transform: none;
-    font-size: 1.2em;
+    font-size: 1rem;
     color: #5a5a5a;
     line-height: 100%;
     padding-bottom: .5rem;
@@ -374,3 +374,45 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
   }
 }
 
+#spc-billing-address {
+  display: none;
+}
+
+// Show / Hide the proper text in the pay now button
+#checkout-pay-btn {
+  transition: all 1s;
+  .spc-button-text {
+    display: inline;
+  }
+  span {
+    display: none;
+  }
+  &.need-info {
+    .spc-need-info {
+      display: inline;
+    }
+    .spc-button-text {
+      display: none;
+    }
+  }
+  &.spc-ready {
+    .spc-place-order {
+      display: inline;
+    }
+    .spc-button-text {
+      display: none;
+    }
+  }
+}
+.spc-billing-toggle-container {
+  padding: .5rem 0 ;
+  input {
+    width: 0;
+  }
+  label {
+    font-size: 1rem;
+    font-family: $boombotixRegular;
+    color: #5a5a5a;
+    font-weight: normal;
+  }
+}
