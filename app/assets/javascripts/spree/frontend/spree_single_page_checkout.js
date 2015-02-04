@@ -37,25 +37,20 @@ Spree.singlePageCheckout.readyForm = function() {
     // of invalid coupon or double submission of valid code
     $('#coupon_code').val('');
     $('#payment-form').submit();
-  }).html('PLACE ORDER');
+  }).removeClass('disabled need-info').addClass('spc-ready');
 };
 
 // Disables the pay button
 Spree.singlePageCheckout.disableForm = function() {
   var checkoutPayBtn = $('#checkout-pay-btn');
   var buttonPrice = $('#button-price');
+  checkoutPayBtn.removeClass('spc-ready');
   checkoutPayBtn.unbind('click').on('click', function() {
-    $(this).addClass('disabled need-info');
+    checkoutPayBtn.addClass('disabled need-info');
     $('#pay-button-container').effect('shake');
-    buttonPrice.fadeOut('fast', function() {
-      $('#need-info-message').fadeIn('fast', function() {
-        $(this).delay(1500).fadeOut('slow', function() {
-          buttonPrice.fadeIn('slow', function() {
-            checkoutPayBtn.removeClass('disabled need-info');
-          });
-        });
-      });
-    });
+    setTimeout(function() {
+      checkoutPayBtn.removeClass('disabled need-info');
+    }, 1000);
   });
 };
 
@@ -71,43 +66,57 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   });
 
   var checkAddressForm = function() {
+    var shippingAddressForm = $('#spc-shipping-address form');
+    var billingAddressForm = $('#spc-billing-address form');
+
+    var formsValid = function() {
+      var shipValidity = shippingAddressForm.h5Validate('allValid');
+      var billValidity = billingAddressForm.h5Validate('allValid');
+
+      if (Spree.singlePageCheckout.useSameAddress) {
+        return shipValidity;
+      } else {
+        return (shipValidity && billValidity);
+      }
+    };
+
     // if all of the required inputs have been filled out,
-    if ($('.addressInfo form').h5Validate('allValid')) {
+    if (formsValid()) {
 
       // Must be true to activate Pay button
       Spree.singlePageCheckout.addressFormValid = true;
-      if (Spree.singlePageCheckout.paymentFormValid && Spree.singlePageCheckout.state == 'payment') {
+      if (Spree.singlePageCheckout.paymentFormValid &&
+          Spree.singlePageCheckout.state == 'payment') {
         Spree.singlePageCheckout.readyForm();
       }
 
-      // prepare some of the data:
-      var data,
-        fullName = $('#address_full_name').val(),
-        splitNames,
-        firstName,
-        lastName,
-        addressInfo;
 
-      splitNames = fullName.split(' ');
-      firstName = splitNames[0];
-      lastName = splitNames[splitNames.length - 1];
-      addressInfo = {
-        firstname: firstName,
-        lastname: lastName,
-        address1: $('#address_address1').val(),
-        address2: $('#address_address2').val(),
-        city: $('#address_city').val(),
-        phone: $('#address_phone').val(),
-        zipcode: $('#address_zipcode').val(),
-        state_name: $('#address_state_name').val(),
-        country_id: $('#address_country_id').val()
+      // Address object constructor
+      var Address = function($form) {
+        this.address1 = $form.find('.street').val();
+        this.address2 = $form.find('.apt').val();
+        this.city = $form.find('.city').val();
+        this.state_name = $form.find('.state').val();
+        this.zipcode = $form.find('.zipcode').val();
+        this.country_id = $form.find('.country').val();
+        this.phone = $form.find('.phone').val();
+
+        var fullName = $form.find('.name').val();
+        var split = fullName.split(' ');
+        this.firstname = split[0];
+        this.lastname = split[split.length - 1];
       };
 
+
+
       // Prepare the object for PUT to the server:
-      data = {
+      var shippingAddress = new Address(shippingAddressForm);
+      var billingAddress = new Address(billingAddressForm);
+      var data = {
         order: {
-          bill_address_attributes: addressInfo,
-          ship_address_attributes: addressInfo
+          ship_address_attributes: shippingAddress,
+          bill_address_attributes: Spree.singlePageCheckout.useSameAddress ?
+            shippingAddress : billingAddress
         }
       };
 
@@ -128,7 +137,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   // Listen for changes in the form
   $('.addressInfo input').unbind('change').on('change', checkAddressForm);
   $('.addressInfo select').unbind('change').on('change', checkAddressForm);
-  $('.addressInfo #address_country_id').unbind('change').on('change', function() {
+  $('.country').unbind('change').on('change', function() {
     Spree.singlePageCheckout.checkoutCountry();
   });
 };
@@ -631,14 +640,16 @@ $(document).ready(function() {
             }
 
             // Populate the address form
-            $('#address_country_id option:contains(' + country + ')').attr('selected', true);
-            $('#address_address1').val(streetNumber + ' ' + streetName);
-            $('#address_city').val(city);
-            $('#address_zipcode').val(zip);
-            $('#address_state_name').val(state);
-
+            var shippingAddressForm = $('#spc-shipping-address form');
+            shippingAddressForm.find('.country option:contains(' + country + ')').attr('selected', true);
+            shippingAddressForm.find('.street').val(streetNumber + ' ' + streetName);
+            shippingAddressForm.find('.city').val(city);
+            shippingAddressForm.find('.zipcode').val(zip);
+            shippingAddressForm.find('.state').val(state);
+            $('.geoLocator i').removeClass('fa-spin');
           } else {
-            alert('Geocoder failed due to: ' + status);
+            $('.geoLocator i').removeClass('fa-spin fa-crosshairs').addClass('fa-exclamation-triangle');
+            console.log('Geocoder failed due to: ' + status);
           }
         }
       });
@@ -658,10 +669,20 @@ $(document).ready(function() {
     // Country Selector
     $('#address_country_id').selectToAutocomplete();
 
-    // Set state if upon page refresh
-    if ($('#address_full_name').val().length > 0) {
-      Spree.singlePageCheckout.state = 'delivery';
-    }
+    // Show / Hide the billing address info when the checkbox is clicked
+    Spree.singlePageCheckout.useSameAddress = true;
+    $('.billing-address-toggle').on('click', function() {
+      var el = $(this);
+      var faCheckbox = el.siblings('label').find('.fa');
+      if (el.is(':checked')) {
+        Spree.singlePageCheckout.useSameAddress = true;
+        faCheckbox.removeClass('fa-square-o').addClass('fa-check-square-o');
+      } else {
+        Spree.singlePageCheckout.useSameAddress = false;
+        faCheckbox.removeClass('fa-check-square-o').addClass('fa-square-o');
+      }
+      $('#spc-billing-address').toggle();
+    });
 
     // listen for changes on the address box
     Spree.singlePageCheckout.checkoutAddress();

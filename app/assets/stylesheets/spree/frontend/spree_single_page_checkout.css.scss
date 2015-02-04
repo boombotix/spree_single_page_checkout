@@ -1,17 +1,18 @@
-/*
-Placeholder manifest file.
-the installer will append this file to the app vendored assets here: 'vendor/assets/stylesheets/spree/frontend/all.css'
-*/
+// Placeholder manifest file.
+// the installer will append this file to the app vendored assets here:
+// 'vendor/assets/stylesheets/spree/frontend/all.css'
+//
 //= require jquery.ui.autocomplete
 
 $boombotixRegular: "TwCenMT-Regular", "Futura", "Century Gothic", Arial, sans-serif !default;
-$boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !default;
+$boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !default;
 
 @mixin boxShadow($params) {
   -moz-box-shadow: $params;
   -webkit-box-shadow: $params;
   box-shadow: $params;
 }
+
 @mixin borderRadius($radius) {
   -webkit-border-radius: $radius;
   -moz-border-radius: $radius;
@@ -29,7 +30,7 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     padding: 1em;
     margin: 10px 0;
     color: #fff;
-    background: rgba(255,0,0,0.5);
+    background: rgba(255, 0, 0, 0.5);
     @include borderRadius(3px);
     text-align: center;
     &:before {
@@ -45,6 +46,7 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     &:focus {
       background: #FAFAFA;
       border: 2px solid #999999;
+      @include borderRadius(inherit);
     }
     border: none;
     @include borderRadius(0);
@@ -125,7 +127,7 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   }
 }
 
-#checkout-summary .checkout-shipping label {
+#spc-checkout-summary .checkout-shipping label {
   display: table;
 }
 
@@ -200,8 +202,8 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   }
 }
 
-#ui-id-1{
-//  autocomplete dropdown
+#ui-id-1 {
+  //  autocomplete dropdown
   max-height: 90px;
   overflow-y: auto !important;
 }
@@ -213,6 +215,7 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
   border-bottom: 2px solid #cfcfcf;
   @include borderRadius(0 0 3px 3px);
 }
+
 .btn.checkout-btn {
   border: none;
   color: #FFF;
@@ -232,25 +235,30 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
 .checkbox, .chckbox-box {
   font-size: 1.12em;
 }
+
 .checkbox-box {
   padding-top: 2px;
 }
-.geoLocator{
+
+.geoLocator {
   height: 2.5rem;
   line-height: 2.5rem;
   font-size: 1.5em;
   text-align: center;
   color: #3c8a0a;
 }
+
 .middle-row {
   border-left: 2px solid #cfcfcf;
   border-right: 2px solid #cfcfcf;
   border-top: 1px solid #cfcfcf;
   @include borderRadius(0);
 }
-.noPadding{
+
+.noPadding {
   padding: 0;
 }
+
 .panel-box,
 .info {
   .row {
@@ -262,13 +270,16 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     }
   }
 }
+
 .panel-box label, .remember label {
   position: relative;
 }
+
 .paymentInfo,
 .addressInfo {
   margin-bottom: 2.875rem;
 }
+
 .paymentInfo {
   .input-group-addon {
     background: none;
@@ -277,18 +288,23 @@ $boombotixBold:  "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !
     color: green;
   }
 }
+
 .right-col {
   border-left: 1px solid #cfcfcf;
 }
+
 .right-text {
   text-align: right;
 }
+
 .top-row {
   border-left: 2px solid #cfcfcf;
   border-right: 2px solid #cfcfcf;
   border-top: 2px solid #cfcfcf;
   @include borderRadius(3px 3px 0 0);
 }
+
+
 label .fa-check-square-o {
   color: #7FBEA0;
 }
@@ -328,15 +344,14 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
   width: 110%;
   background: transparent no-repeat;
   background-position: 85% 50%;
-  background-image: asset_url('dropdown-arrow.png');
+  background-image: asset_url("dropdown-arrow.png");
 }
 
 #coupon-message {
   color: #f65252;
 }
 
-#need-info-message {
-  // font-size: 1rem;
+.spc-need-info {
   display: none;
   color: #f65252;
   text-transform: uppercase;
@@ -345,6 +360,7 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
 .need-info {
   border: 2px solid #f65252 !important;
   background-color: white !important;
+  transition: all 1s;
 }
 
 .accessory-img {
