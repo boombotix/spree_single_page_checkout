@@ -19,7 +19,7 @@ describe 'Single Page Checkout', type: :feature, js: true do
       warranty.master.id,
       tote.master.id
     ]
-    @address = attributes_for(:address, state: @state)
+    @address = attributes_for(:address, state: state)
     @credit_card = attributes_for(:credit_card)
   end
 
@@ -34,6 +34,34 @@ describe 'Single Page Checkout', type: :feature, js: true do
   it 'Adds shipping options to the Summary' do
     fill_in_address
     expect(page).to have_content(Spree::ShippingMethod.first.name)
+  end
+
+  context 'when the billing address is different from the shipping address' do
+    let!(:billing_address) do
+      attributes_for(
+        :address,
+        firstname: 'Kathryn',
+        lastname: 'Janeway',
+        address1: '35 Keyes Ave',
+        city: 'San Francisco',
+        zipcode: '94129',
+        state: state
+      )
+    end
+
+    it 'shows the billing address form' do
+      find('.billing-address-toggle').trigger('click')
+      expect(page).to have_selector('#spc-billing-address', visible: true)
+    end
+
+    it 'updates the order with the two seperate addresses' do
+      find('.billing-address-toggle').trigger('click')
+      fill_in_address
+      fill_in_address('billing', billing_address)
+      wait_for_ajax
+      @order.reload
+      expect(@order.billing_address.address1).to eq(billing_address[:address1])
+    end
   end
 
   it 'Moves from Delivery to Payment when delivery option selected' do
@@ -58,8 +86,7 @@ describe 'Single Page Checkout', type: :feature, js: true do
   it 'Geolocates the Customer' do
     find('.geoLocator').click
     sleep 3.seconds
-    address_val = page.evaluate_script('$(\'#address_address1\').val();')
-    expect(address_val).to eq('8000 Sunset Blvd')
+    expect(find('#spc-shipping-address .street').value).to eq('8000 Sunset Blvd')
   end
 
   context 'when payment info has been filled out' do
@@ -124,8 +151,9 @@ describe 'Single Page Checkout', type: :feature, js: true do
     before do
       fill_in_address
       find('.checkout-addons').find('label', text: warranty.name).click
-      wait_for_ajax
+      sleep 5.seconds
       find('.checkout-addons').find('label', text: tote.name).click
+      sleep 10.seconds
     end
 
     it 'adds it to the order' do
@@ -144,15 +172,16 @@ describe 'Single Page Checkout', type: :feature, js: true do
     end
   end
 
-  def fill_in_address
-    fill_in 'address_full_name', with: @address[:firstname] + ' ' + @address[:lastname]
-    fill_in 'address_address1', with: @address[:address1]
-    fill_in 'address_address2', with: @address[:address2]
-    fill_in 'address_city', with: @address[:city]
-    all('#address_state_name option')[0].select_option
-    fill_in 'address_zipcode', with: @address[:zipcode]
-    fill_in 'address_phone', with: @address[:phone]
-    select 'United States of America', from: 'address_country_id', visible: false
+  def fill_in_address(type = 'shipping', address = @address)
+    form = find("#spc-#{type}-address")
+    form.fill_in 'address[full_name]', with: address[:firstname] + ' ' + address[:lastname]
+    form.fill_in 'address[address1]', with: address[:address1]
+    form.fill_in 'address[address2]', with: address[:address2]
+    form.fill_in 'address[city]', with: address[:city]
+    form.select address[:state], from: 'address[state_name]'
+    form.fill_in 'address[zipcode]', with: address[:zipcode]
+    form.fill_in 'address[phone]', with: address[:phone]
+    form.select 'United States of America', from: 'address[country_id]', visible: false
   end
 
   def fill_in_payment
