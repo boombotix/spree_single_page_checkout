@@ -22,7 +22,16 @@
 
   <%# Order Summary - Displays to right of address & payment info & is updated via AJAX %>
   <div class="col-xs-12 col-sm-7 col-md-7">
-    <h2>Order Summary</h2>
+
+    <%# Pay button container required for the shake effect %>
+    <div id="pay-button-container">
+      <button class="btn checkout-btn btn-lg btn-primary btn-block" id="checkout-pay-btn">
+          Pay&nbsp;<span class="checkout-total" id="button-price"><%= number_to_currency( @order.total ) %></span>
+        <%# Displays when form is invalid %>
+        <span id="need-info-message">Missing required info</span>
+      </button>
+    </div>
+
     <div class="panel-box" id="checkout-summary">
       <div id="line-items">
       <% @order.line_items.each do |item| %>
@@ -94,14 +103,6 @@
       </div>
 
 
-      <%# Pay button container required for the shake effect %>
-      <div id="pay-button-container">
-        <button class="btn checkout-btn btn-lg btn-primary btn-block" id="checkout-pay-btn">
-           Pay&nbsp;<span class="checkout-total" id="button-price"><%= number_to_currency( @order.total ) %></span>
-          <%# Displays when form is invalid %>
-          <span id="need-info-message">Missing required info</span>
-        </button>
-      </div>
     </div>
   </div>
 </div>
