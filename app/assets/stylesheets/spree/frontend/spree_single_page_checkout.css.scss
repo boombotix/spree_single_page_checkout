@@ -191,7 +191,6 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
 }
 
 #main.store-checkout div.title {
-  border-bottom: 5px solid #00adeb;
   margin: 1.875em 0 2.5em;
   height: auto;
   h2 {
@@ -413,6 +412,16 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
   &.spc-ready {
     .spc-place-order {
       display: inline;
+    }
+    .spc-button-text {
+      display: none;
+    }
+  }
+  &.processing {
+    background: asset-data-url('loading-animation.svg');
+    .spc-order-processing {
+      display: inline;
+      text-transform: uppercase;
     }
     .spc-button-text {
       display: none;

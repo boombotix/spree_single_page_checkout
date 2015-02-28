@@ -37,6 +37,9 @@ Spree.singlePageCheckout.readyForm = function() {
     // of invalid coupon or double submission of valid code
     $('#coupon_code').val('');
     $('#payment-form').submit();
+    // Prevent the button from being clicked multiple times & display a
+    // 'processing' message
+    $(this).removeClass('spc-ready').addClass('disabled processing');
   }).removeClass('disabled need-info').addClass('spc-ready');
 };
 
