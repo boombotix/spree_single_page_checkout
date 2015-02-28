@@ -70,7 +70,7 @@
     </div>
   </div> <%# .row %>
   <div class="row middle-row">
-    <div class="col-xs-12 col-sm-8 col-md-8" id="states-container">
+    <div class="col-xs-12 col-sm-8 col-md-8 states-container">
       <% state_name = form.object.state ? form.object.state.name : nil %>
       <%= form.collection_select(:state_name,
         form.object.country.states.sort,

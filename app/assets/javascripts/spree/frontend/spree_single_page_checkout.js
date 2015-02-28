@@ -141,37 +141,40 @@ Spree.singlePageCheckout.checkoutAddress = function() {
   $('.addressInfo input').unbind('change').on('change', checkAddressForm);
   $('.addressInfo select').unbind('change').on('change', checkAddressForm);
   $('.country').unbind('change').on('change', function() {
-    Spree.singlePageCheckout.checkoutCountry();
+    Spree.singlePageCheckout.checkoutCountry($(this));
   });
 };
 
 // For countries other than U.S., change state dropdown to text field
-Spree.singlePageCheckout.checkoutCountry = function() {
+Spree.singlePageCheckout.checkoutCountry = function($countrySelect) {
   var getStates = function() {
-    var country_id = $('#address_country_id').val();
+    var country_id = $countrySelect.val();
     $.get(Spree.routes.states_search, {country_id: country_id}, function(data) {
-      var $states_container;
+      var $states_container = $countrySelect.parents('.addressInfo').find('.states-container');
       if (data.states.length === 0) {
-        $states_container = $('#states-container');
         $states_container.empty();
         $states_container.append('<input autocomplete="region" class="form-control state validation-error h5-active" id="address_state_name" name="address[state_name]" placeholder="State, Province, or Region" required="required" type="text">');
       }
       else {
+        // Regenerate the <select> with proper options for the selected country
         var all_states = data.states;
-        $states_container = $('#states-container');
         $states_container.empty();
-        $states_container.append('<select autocomplete="region" class="form-control state validation-error h5-active" id="address_state_name" name="address[state_name]" required="required"></select>');
-        var $el = $('#address_state_name');
+        var selectEl = document.createElement('select');
+        selectEl.setAttribute('name', 'address[state_name]');
+        selectEl.setAttribute('autocomplete', 'region');
+        selectEl.setAttribute('class', 'form-control state');
+        selectEl.setAttribute('required', true);
         $.each(all_states, function(index, value) {
+          var $el = $(selectEl);
           $el.append($("<option></option>")
              .attr("value", value.name).text(value.name));
         });
+        $states_container.append(selectEl);
       }
       // Check address and rebind event handlers
       Spree.singlePageCheckout.checkoutAddress();
     });
   };
-  // Run once when page loads
   getStates();
 };
 
