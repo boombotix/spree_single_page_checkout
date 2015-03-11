@@ -28,6 +28,12 @@ Spree.singlePageCheckout.checkCompleteForm = function() {
   else {
     Spree.singlePageCheckout.disableForm();
   }
+
+  if (Spree.singlePageCheckout.noPaymentNeeded) {
+    $('#checkout-pay-btn').replaceWith(
+        '<a href="/orders/' + Spree.singlePageCheckout.orderNumber + '" class="btn checkout-btn btn-lg btn-primary btn-block">COMPLETE ORDER</a>'
+        );
+  }
 };
 
 // Activates the pay button
@@ -180,6 +186,14 @@ Spree.singlePageCheckout.checkoutCountry = function($countrySelect) {
 
 // update the order summary section after a successful request
 Spree.singlePageCheckout.updateOrderSummary = function(data) {
+  // Set a variable if the order total is 0
+  if (parseInt(data.total) === 0) {
+    Spree.singlePageCheckout.noPaymentNeeded = true;
+    Spree.singlePageCheckout.paymentFormValid = true;
+    Spree.singlePageCheckout.orderNumber = data.number;
+  } else {
+    Spree.singlePageCheckout.noPaymentNeeded = false;
+  }
 
   // Handlebars helper to check if two values are equal
   Handlebars.registerHelper('ifEql', function(value1, value2, options) {
@@ -332,6 +346,11 @@ Spree.singlePageCheckout.checkoutPayment = function() {
       }
       else {
         Spree.singlePageCheckout.paymentFormValid = false;
+      }
+
+      // If no payment is needed, we don't care if the form is valid
+      if (Spree.singlePageCheckout.noPaymentNeeded) {
+        Spree.singlePageCheckout.paymentFormValid = true;
       }
       Spree.singlePageCheckout.checkCompleteForm();
     });
