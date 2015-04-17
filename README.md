@@ -20,8 +20,7 @@ Dependencies
 
 Includes
 ----------
-jquery-ui-autocomplete
-jquery-ui-effect-shake
+jquery-ui
 jquery.payment
 jquery.h5validate
 jquery.select-to-autocomplete
