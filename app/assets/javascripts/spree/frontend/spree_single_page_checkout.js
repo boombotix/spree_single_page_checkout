@@ -672,7 +672,7 @@ $(document).ready(function() {
     $('#verification_value').payment('formatCardCVC');
 
     // Country Selector
-    $('.country').selectToAutocomplete();
+    $('#address_country_id').selectToAutocomplete();
 
     // Show / Hide the billing address info when the checkbox is clicked
     Spree.singlePageCheckout.useSameAddress = true;
