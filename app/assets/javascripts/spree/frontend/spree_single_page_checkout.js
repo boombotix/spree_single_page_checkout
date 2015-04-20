@@ -3,6 +3,7 @@
 //= require jquery.payment
 //= require jquery.h5validate
 //= require jquery-ui
+//= require jquery.select-to-autocomplete.min
 
 // ================================================= //
 //  Javascript  for Single Page Checkout extension   //
