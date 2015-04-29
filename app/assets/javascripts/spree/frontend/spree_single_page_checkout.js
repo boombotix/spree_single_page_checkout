@@ -2,8 +2,7 @@
 //= require handlebars-v2.0.0
 //= require jquery.payment
 //= require jquery.h5validate
-//= require jquery.ui.autocomplete
-//= require jquery-ui-effect-shake.min
+//= require jquery-ui
 //= require jquery.select-to-autocomplete.min
 
 // ================================================= //
