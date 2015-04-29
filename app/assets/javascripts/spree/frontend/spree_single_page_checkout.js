@@ -394,8 +394,9 @@ Spree.singlePageCheckout.apiRequest = function(data) {
     '<span>Updating your order...</span></div>'
   );
 
-  var url = '/api/checkouts/' + Spree.current_order_id ;
+  var url = '/api/checkouts/' + Spree.current_order_id;
   data.order_token = Spree.current_order_token;
+  data.template = 'spree/api/orders/show_with_manifest';
   $.ajax({
     url: url,
     method: 'PUT',
