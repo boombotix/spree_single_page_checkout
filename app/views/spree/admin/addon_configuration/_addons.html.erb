@@ -1,5 +1,5 @@
 
-<table class="addons index" data-hook="addons">
+<table class="addons index table" data-hook="addons">
   <colgroup>
     <col style="width: 10%;" />
     <col style="width: 75%;" />
@@ -20,8 +20,10 @@
         <td class="variant-name">
           <%= addon.product.name %>
         </td>
-        <td class="variant-actions">
-          <%= link_to '', '#', class: 'remove-addon fa fa-trash no-text with-tip', title: 'Remove from addons', :'data-variant-id' => addon.id %>
+        <td class="variant-actions text-right">
+          <%= link_to '#', class: 'remove-addon btn btn-danger btn-sm no-text with-tip', title: 'Remove from addons', :'data-variant-id' => addon.id do %>
+            <span class="icon icon-delete"></span>
+          <% end %>
         </td>
       </tr>
     <% end %>
