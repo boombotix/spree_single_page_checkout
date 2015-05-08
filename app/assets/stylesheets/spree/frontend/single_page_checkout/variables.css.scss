@@ -1,0 +1,48 @@
+/// `spree_single_page_checkout` Variables & Mixins
+/// @author Evan Pavlica [evan@altolabs.co]
+
+// Colors
+$silver-grey: #cfcfcf;
+$gunmetal-grey: #5a5a5a;
+$light-grey : #f4f4f4;
+$leaf-green: #008000;
+$teal-green: #7fbea0;
+
+$blue: #00adeb;
+$lightBlue: #4cc1eb;
+$darkBlue: #1b86be;
+$purple: #983897;
+$lightPurple: #be46bd;
+$darkPurple: #5b215a;
+
+/// Color of borders round inputs
+/// @type Color
+$borders: $silver-grey;
+/// Background Color behind the Order Summary
+/// @type Color
+$summary-background: $light-grey;
+$icons: $leaf-green;
+$active-button: $blue;
+$subheading: $gunmetal-grey;
+$heading: $blue;
+$disabled: $silver-grey;
+
+// Fonts
+$boombotixRegular: "TwCenMT-Regular", "Futura", "Century Gothic", Arial, sans-serif;
+$boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif;
+
+$regular: $boombotixRegular;
+$bold: $boombotixBold;
+
+// Mixins
+@mixin boxShadow($params) {
+  -moz-box-shadow: $params;
+  -webkit-box-shadow: $params;
+  box-shadow: $params;
+}
+
+@mixin borderRadius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  border-radius: $radius;
+}

@@ -1,0 +1,71 @@
+<div class="panel-box" id="spc-checkout-summary">
+  <div id="line-items">
+    <% @order.line_items.each do |item| %>
+      <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2">
+          <%= small_image(item.variant) %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-2 col-sm-1 col-md-1">
+          <%= item.quantity %>
+        </div>
+        <div class="col-xs-10 col-sm-8 col-md-8">
+          <%= item.name %>
+        </div>
+        <div class="col-xs-12 col-sm-3 col-md-3 right-text">
+          <%= number_to_currency( item.price ) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+
+  <%# Addon items. Elements inside are generated via the JS file. %>
+  <div class="checkout-addons-header row"></div>
+  <div class="checkout-addons row"></div>
+
+
+  <%# Price adjustments / promotions %>
+  <%# For line-item promotions %>
+  <div id="line-item-adjustments">
+    <% if @order.line_item_adjustments.exists? %>
+      <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+        <div class="checkbox-box promotion-label">
+          <%= label %> &nbsp;
+          <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <%# For promotions on the whole order %>
+  <div id="order-adjustments">
+    <% if @order.adjustments.exists? %>
+      <% @order.adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+        <div class="checkbox-box promotion-label">
+          <%= label %> &nbsp;
+          <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Tax %>
+  <div id="taxes">
+    <% @order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+      <div class="checkbox-box">
+        <%= label %> &nbsp;
+        (+ <%= Spree::Money.new(adjustments.sum(&:amount)).to_html %>)
+      </div>
+    <% end %>
+  </div>
+
+  <%# Order Total %>
+  <div class="row total">
+    <div class="col-xs-6 col-sm-9 col-md-9">Total</div>
+    <div class="col-xs-6 col-sm-3 col-md-3 right-text checkout-total">
+      <%= number_to_currency( @order.total ) %>
+    </div>
+  </div>
+
+</div>

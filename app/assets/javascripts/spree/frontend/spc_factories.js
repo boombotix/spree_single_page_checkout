@@ -27,9 +27,12 @@ Spree.singlePageCheckout.Address = function ($form) {
 Spree.singlePageCheckout.Order = function () {
   this.bill_address = null;
   this.ship_address = null;
-  this.email = null;
-  this.state = null;
   this.payments_attributes = [];
+  this.coupon_code = null;
+
+  // Add the payment method ID to the payment methods array
+  var paymentMethodId = $('#payment_method_id').val();
+  this.payments_attributes.push({ payment_method_id: paymentMethodId });
 };
 
 /**
@@ -38,13 +41,14 @@ Spree.singlePageCheckout.Order = function () {
  * @memberof singlePageCheckout
  * @param {number} payment_id - ID of Spree payment method
  */
-Spree.singlePageCheckout.Payment = function (payment_id) {
-  var payment = this[payment_id] = {};
-  payment.number = null;
-  payment.month = null;
-  payment.year = null;
-  payment.verification_value = null;
-  payment.name = null;
+Spree.singlePageCheckout.Payment = function ($form) {
+  var paymentId = $('#payment_method_id').val();
+  var payment = this[paymentId] = {};
+  payment.number = $form.find('#number').val();
+  payment.month = $form.find('#date').val().substr(0,2);
+  payment.year = $form.find('#date').val().substr(5,2);
+  payment.verification_value = $form.find('#verification_value').val();
+  payment.name = $form.find('#name').val();
 };
 
 /**

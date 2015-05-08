@@ -1,0 +1,64 @@
+@import 'variables';
+
+.spc-ripple-btn {
+  display: block;
+  border: none;
+  color: white;
+  line-height: 100%;
+  @include borderRadius(3px);
+  -webkit-appearance: none;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: $active-button;
+  margin: 1rem 0;
+}
+
+.spc-ripple-btn-contents {
+  display: block;
+  width: 100%;
+  text-transform: uppercase;
+  padding: .6875rem .625rem;
+  font-family: $regular;
+  font-size: 1.5rem;
+  user-select: none;
+  position: relative;
+}
+
+.spc-ink {
+  background: lighten($active-button,30%);
+  display: block;
+  position: absolute;
+  border-radius: 100%;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+
+  &.ripple {
+    -moz-animation: ripple 0.65s linear;
+    -webkit-animation: ripple 0.65s linear;
+    animation: ripple 0.65s linear;
+  }
+}
+
+
+@-moz-keyframes ripple {
+  to {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+
+@-webkit-keyframes ripple {
+  to {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+@keyframes ripple {
+  to {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}

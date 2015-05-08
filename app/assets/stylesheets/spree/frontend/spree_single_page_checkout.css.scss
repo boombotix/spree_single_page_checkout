@@ -1,33 +1,38 @@
-// Placeholder manifest file.
-// the installer will append this file to the app vendored assets here:
-// 'vendor/assets/stylesheets/spree/frontend/all.css'
-//
 //= require jquery-ui/autocomplete
+@import 'single_page_checkout/variables';
+@import 'single_page_checkout/ripple-btn';
 
-$boombotixRegular: "TwCenMT-Regular", "Futura", "Century Gothic", Arial, sans-serif !default;
-$boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !default;
+#checkout-content {
+  font-size: 13px;
+  padding: 0;
+  h2 {
+    font-family: $regular;
+    font-weight: normal;
+    font-size: 1.66em;
+    color: $subheading;
+    padding: 0 0 .5rem;
+    text-shadow: none;
+    margin-top: 0;
+  }
+  h3 {
+    font-family: $regular;
+    text-transform: none;
+    font-size: 1rem;
+    color: $subheading;
+    line-height: 100%;
+    padding-bottom: .5rem;
+    text-shadow: none;
+    margin-bottom: 0;
+  }
+  @media only screen and (max-width: 767px) {
+    margin: 0;
+    padding-bottom: 0;
+  }
 
-@mixin boxShadow($params) {
-  -moz-box-shadow: $params;
-  -webkit-box-shadow: $params;
-  box-shadow: $params;
-}
-
-@mixin borderRadius($radius) {
-  -webkit-border-radius: $radius;
-  -moz-border-radius: $radius;
-  border-radius: $radius;
-}
-
-#checkout {
-
-  // Reomve ugly dropdown styling in Firefox
+  // Remove ugly dropdown styling in Firefox
   select {
     -moz-appearance: none;
   }
-
-  font-size: 13px;
-  padding-bottom: 3.125rem;
   .checkbox label {
     padding-left: 1.5625rem;
   }
@@ -45,19 +50,19 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
   }
   .form-control {
     color: #000;
+    background-color: transparent;
     font-size: 1em;
     line-height: 100%;
     height: 2.5rem;
     @include boxShadow(none);
+    border: none;
+    @include borderRadius(0);
     &:focus {
-      background: #FAFAFA;
       border: 2px solid #999999;
       @include borderRadius(inherit);
     }
-    border: none;
-    @include borderRadius(0);
     &:invalid {
-      background-color: #fff;
+      background-color: transparent;
     }
   }
   .panel-box {
@@ -133,77 +138,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
 }
 
 #spc-checkout-summary .checkout-shipping label {
-  display: table;
-}
-
-#checkout .checkout-container {
-  padding: 0;
-  .button {
-    background: #0079c1;
-    font-family: $boombotixRegular;
-    font-size: 1em;
-    padding: 0.6875rem 0;
-    border-radius: 3px;
-  }
-  .or-box {
-    text-align: center;
-    font-size: 1.2em;
-    color: #000;
-    padding: 0 0 .75rem;
-    span {
-      display: inline-block;
-      position: relative;
-      &:before, &:after {
-        content: "";
-        position: absolute;
-        height: 1px;
-        border-top: 1px solid #000000;
-        top: .5rem;
-        width: 3rem;
-      }
-      &:before {
-        right: 100%;
-        margin-right: .3125rem;
-      }
-      &:after {
-        left: 100%;
-        margin-left: .3125rem;
-      }
-    }
-  }
-  h2 {
-    font-family: $boombotixRegular;
-    font-weight: normal;
-    font-size: 1.66em;
-    color: #5a5a5a;
-    padding: 0 0 .5rem;
-    text-shadow: none;
-    margin-top: 0;
-  }
-  h3 {
-    font-family: $boombotixRegular;
-    text-transform: none;
-    font-size: 1rem;
-    color: #5a5a5a;
-    line-height: 100%;
-    padding-bottom: .5rem;
-    text-shadow: none;
-    margin-bottom: 0;
-  }
-  @media only screen and (max-width: 767px) {
-    margin: 0;
-    padding: 0;
-  }
-}
-
-#main.store-checkout div.title {
-  margin: 1.875em 0 2.5em;
-  height: auto;
-  h2 {
-    text-shadow: none;
-    font-size: 1.9em;
-    margin: 0 auto;
-  }
+  display: block;
 }
 
 #ui-id-1 {
@@ -213,10 +148,8 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
 }
 
 .bottom-row {
-  border-left: 2px solid #cfcfcf;
-  border-right: 2px solid #cfcfcf;
-  border-top: 1px solid #cfcfcf;
-  border-bottom: 2px solid #cfcfcf;
+  border: 2px solid $borders;
+  border-top-width: 1px;
   @include borderRadius(0 0 3px 3px);
 }
 
@@ -227,8 +160,8 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
   line-height: 100%;
   outline: none;
   padding: .6875rem .625rem;
-  background: #46afee;
-  font-family: $boombotixRegular;
+  background: $active-button;
+  font-family: $regular;
   font-size: 1.9em;
   -webkit-appearance: none;
   &:hover {
@@ -236,7 +169,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
   }
 }
 
-.checkbox, .chckbox-box {
+.checkbox, .checkbox-box {
   font-size: 1.12em;
 }
 
@@ -249,13 +182,13 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
   line-height: 2.5rem;
   font-size: 1.5em;
   text-align: center;
-  color: #3c8a0a;
+  color: $icons;
 }
 
 .middle-row {
-  border-left: 2px solid #cfcfcf;
-  border-right: 2px solid #cfcfcf;
-  border-top: 1px solid #cfcfcf;
+  border: 2px solid $borders;
+  border-top-width: 1px;
+  border-bottom-width: 0;
   @include borderRadius(0);
 }
 
@@ -281,7 +214,8 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
 
 .paymentInfo,
 .addressInfo {
-  margin-bottom: 2.875rem;
+  @include borderRadius(3px);
+  // margin-bottom: 2.875rem;
 }
 
 .paymentInfo {
@@ -294,37 +228,23 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
 }
 
 .right-col {
-  border-left: 1px solid #cfcfcf;
-}
-
-.right-text {
-  text-align: right;
+  border-left: 1px solid $borders;
 }
 
 .top-row {
-  border-left: 2px solid #cfcfcf;
-  border-right: 2px solid #cfcfcf;
-  border-top: 2px solid #cfcfcf;
+  border: 2px solid $borders;
+  border-bottom-width: 0;
   @include borderRadius(3px 3px 0 0);
 }
-
 
 label .fa-check-square-o {
   color: #7FBEA0;
 }
 
 @media only screen and (max-width: 767px) {
-  #checkout.container.upper {
+  #checkout-content.container.upper {
     padding-left: 0;
     padding-right: 0;
-  }
-  #checkout body {
-    .checkout-container {
-      padding: 0 5%;
-    }
-    .panel-box {
-      padding: 1.2 rem;
-    }
   }
   .btn.checkout-btn {
     font-size: 1.5em;
@@ -375,9 +295,9 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
 .warranty-icon {
   left: 50%;
   // To horizontally center (margin left/right: auto was not working)
-  transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
   -moz-transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 
 .checkout-loading {
@@ -424,7 +344,7 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
     }
   }
   &.processing {
-    background: asset-data-url('loading-animation.svg');
+    background: asset-data-url("loading-animation.svg");
     .spc-order-processing {
       display: inline;
       text-transform: uppercase;
@@ -434,8 +354,9 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
     }
   }
 }
+
 .spc-billing-toggle-container {
-  padding: .5rem 0 ;
+  padding: 0.5rem 0;
   input {
     width: 0;
   }
@@ -445,4 +366,16 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
     color: #5a5a5a;
     font-weight: normal;
   }
+}
+.spc-heading {
+  h1 {
+    font-family: $bold;
+    color: $heading;
+    text-transform: uppercase;
+    font-size: 1.9rem;
+    margin: 1.875em 0 2.5em;
+  }
+}
+.spc-disabled {
+  background-color: $disabled;
 }

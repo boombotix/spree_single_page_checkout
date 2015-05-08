@@ -1,5 +1,5 @@
 <h3>Payment Information</h3>
-<div class="paymentInfo info">
+<div class="paymentInfo info spc-disabled">
   <%= form_tag update_checkout_path(state: 'payment'), { autocomplete: 'on', method: 'patch', id: 'payment-form' } do %>
     <%= hidden_field_tag 'action', 'update' %>
     <%= hidden_field_tag 'state', 'payment' %>

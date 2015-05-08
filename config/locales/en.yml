@@ -6,3 +6,6 @@ en:
     addon_configuration: 'Addon Configuration'
     add_variant_to_addons: 'Add a new product to addons'
     current_addon_items: 'Current Addon Items'
+    single_page_checkout:
+      heading: 'Review Your Order'
+      next: 'Next'

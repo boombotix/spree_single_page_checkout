@@ -1,0 +1,17 @@
+<%# Pay button container required for the shake effect %>
+<div id="pay-button-container">
+  <button class="btn checkout-btn btn-lg btn-primary btn-block" id="checkout-pay-btn">
+    <%# Default "Pay $0.00" text %>
+    <span class="spc-button-text">
+      Pay&nbsp;
+      <span class="spc-button-text checkout-total" id="button-price">
+        <%= number_to_currency( @order.total ) %>
+      </span>
+    </span>
+    <%# Displays when form is invalid %>
+    <span class="spc-need-info">Missing required info</span>
+    <%# Displays when order is ready to be placed %>
+    <span class="spc-place-order">PLACE ORDER</span>
+    <span class="spc-order-processing">Processing your order</span>
+  </button>
+</div>
