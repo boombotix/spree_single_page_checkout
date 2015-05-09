@@ -1,7 +1,7 @@
 Spree::Order.class_eval do
   # after_update :update_shipping_and_tax
   # remove_checkout_step :delivery
-  remove_checkout_step :confirm
+  # remove_checkout_step :confirm
 
   private
 

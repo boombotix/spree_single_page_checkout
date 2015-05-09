@@ -17,12 +17,17 @@ Spree.singlePageCheckout.addressNext = function() {
         addClass('spc-disabled').
         disableForm();
 
+      Spree.singlePageCheckout.apiRequest(
+          '/api/checkouts/' + Spree.current_order_id + '.json',
+          { order: Spree.singlePageCheckout.currentOrder }
+        ).done(Spree.singlePageCheckout.updateOrderSummary);
       // Scroll to center the Payment div on the page
 
       // Add an event listener to go back to the address stage if that div is
       // clicked on
 
       // Disable the address-next Button after the animation has run
+      setTimeout(function() { $this.addClass('spc-disabled'); }, 650);
     }
   });
 };
@@ -44,10 +49,20 @@ Spree.singlePageCheckout.paymentNext = function() {
 
       // Scroll to the top of the SPC
 
-      // Make the API Request to update the order summary
-      Spree.singlePageCheckout.updateOrder();
+
+      // Display a loading message while we make API requests...
+      $('#line-items').html(
+        '<div class="checkout-loading">' +
+        '<i class="fa fa-gear fa-spin fa-4x"></i>' +
+        '<span>Updating your order...</span></div>'
+      );
+
+      Spree.singlePageCheckout.updatePayment().
+        done([Spree.singlePageCheckout.updateOrderSummary,
+            Spree.singlePageCheckout.readyForm]);
 
       // Disable the payment-next button after the animation has run.
+      setTimeout(function() { $this.addClass('spc-disabled'); }, 650);
     }
   });
 };

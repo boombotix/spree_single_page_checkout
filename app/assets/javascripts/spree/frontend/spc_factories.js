@@ -25,14 +25,15 @@ Spree.singlePageCheckout.Address = function ($form) {
  * @memberof singlePageCheckout
  */
 Spree.singlePageCheckout.Order = function () {
-  this.bill_address = null;
-  this.ship_address = null;
+  this.bill_address_attributes = null;
+  this.ship_address_attributes = null;
+  this.shipments_attributes = null;
   this.payments_attributes = [];
   this.coupon_code = null;
 
   // Add the payment method ID to the payment methods array
-  var paymentMethodId = $('#payment_method_id').val();
-  this.payments_attributes.push({ payment_method_id: paymentMethodId });
+  // var paymentMethodId = $('#payment_method_id').val();
+  // this.payments_attributes.push({ payment_method_id: paymentMethodId });
 };
 
 /**

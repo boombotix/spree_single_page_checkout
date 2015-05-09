@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_single_page_checkout'
   s.version     = '3.0.0'
   s.summary     = 'Single Page Checkout for the Boombotix store'
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.2.0'
 
   s.author    = 'Alto Labs'
   s.email     = 'edwin@altolabs.co'
@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_core', '3.0.0'
   s.add_dependency 'bootstrap-sass',  '~> 3'
   s.add_dependency 'font-awesome-rails', '~> 4.0'
+  s.add_dependency 'angularjs-rails', '1.2.16' # Version locked becuase the boombotix app is
+
 
   s.add_development_dependency 'pry-rails'
   s.add_development_dependency 'coffee-script'

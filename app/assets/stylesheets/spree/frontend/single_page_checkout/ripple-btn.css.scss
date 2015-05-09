@@ -12,6 +12,11 @@
   overflow: hidden;
   background-color: $active-button;
   margin: 1rem 0;
+
+  &.spc-disabled {
+    -webkit-transition: background-color 1s ease;
+    transition: background-color 1s ease;
+  }
 }
 
 .spc-ripple-btn-contents {

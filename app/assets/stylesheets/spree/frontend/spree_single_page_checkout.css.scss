@@ -29,10 +29,24 @@
     padding-bottom: 0;
   }
 
-  // Remove ugly dropdown styling in Firefox
   select {
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
     -moz-appearance: none;
+    overflow: hidden;
+    background: transparent no-repeat;
+    background-position: 98% center;
+    background-image: asset_url("dropdown-arrow.png");
   }
+
+  // Disable the yellow background from autofilled forms in chrome
+  input:-webkit-autofill,
+  select:-webkit-autofill,
+  textarea:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0 100px white;
+  }
+
   .checkbox label {
     padding-left: 1.5625rem;
   }
@@ -126,13 +140,22 @@
     }
   }
   .validation-error {
-    border: 1px solid #a94442;
-    @include boxShadow(inset 0 1px 6px #ce8483);
+    // border: 1px solid #a94442;
+    @include boxShadow(inset 0 0 10px $validation);
   }
   input {
     &[type="radio"], &[type="checkbox"] {
       outline: none;
       visibility: hidden;
+    }
+  }
+  .spc-disabled {
+    background-color: $disabled;
+
+    input:-webkit-autofill,
+    select:-webkit-autofill,
+    textarea:-webkit-autofill {
+      -webkit-box-shadow: inset 0 0 0 100px $disabled;
     }
   }
 }
@@ -238,7 +261,7 @@
 }
 
 label .fa-check-square-o {
-  color: #7FBEA0;
+  color: $checkbox;
 }
 
 @media only screen and (max-width: 767px) {
@@ -259,17 +282,6 @@ label .fa-check-square-o {
   }
 }
 
-select#address_state_name.form-control.state.h5-active.ui-state-valid {
-  border: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  overflow: hidden;
-  width: 110%;
-  background: transparent no-repeat;
-  background-position: 85% 50%;
-  background-image: asset_url("dropdown-arrow.png");
-}
 
 #coupon-message {
   color: #f65252;
@@ -375,7 +387,4 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
     font-size: 1.9rem;
     margin: 1.875em 0 2.5em;
   }
-}
-.spc-disabled {
-  background-color: $disabled;
 }
