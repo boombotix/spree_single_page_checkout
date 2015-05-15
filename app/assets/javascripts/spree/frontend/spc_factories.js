@@ -62,7 +62,6 @@ Spree.singlePageCheckout.Payment = function ($form) {
  */
 Spree.singlePageCheckout.ShipmentMethod = function (shipping_rate_id,
     shipment_id) {
-  var shipment = this["0"] = {};
-  shipment.selected_shipping_rate_id = shipping_rate_id;
-  shipment.id = shipment_id;
+  this.selected_shipping_rate_id = shipping_rate_id;
+  this.id = shipment_id;
 };

@@ -1,18 +1,8 @@
 Spree::Order.class_eval do
-  # after_update :update_shipping_and_tax
-  # remove_checkout_step :delivery
-  # remove_checkout_step :confirm
 
-  private
-
-  def update_shipping_and_tax
-    self.shipments.each do |shipment|
-      shipment.refresh_rates
-      shipment.update_amounts
-    end
-    line_items.each do |line_item|
-      line_item.send(:update_tax_charge)
-    end
-    self.update!
-  end
+  # checkout_flow do
+  #   go_to_state :address
+  #   go_to_state :review
+  #   go_to_state :complete
+  # end
 end

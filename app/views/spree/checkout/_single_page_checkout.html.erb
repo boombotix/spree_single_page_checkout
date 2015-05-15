@@ -20,7 +20,7 @@
       <h3>Shipping Address</h3>
       <div class="addressInfo info" id="spc-shipping-address">
         <%= render partial: 'spree/checkout/single_page_checkout/address_form',
-            locals: { address: @order.shipping_address, geolocate: true } %>
+            locals: { address: @order.shipping_address ||= Spree::Address.new(country_id: Spree::Config.default_country_id), geolocate: true } %>
       </div>
       <div class="spc-billing-toggle-container">
         <%= check_box_tag 'billing', 'yes', true, class: 'billing-address-toggle' %>
@@ -34,16 +34,18 @@
       <div class="addressInfo info" id="spc-billing-address">
         <h3>Billing Address</h3>
         <%= render partial: 'spree/checkout/single_page_checkout/address_form',
-            locals: { address: @order.billing_address, geolocate: false } %>
+            locals: { address: @order.billing_address ||= Spree::Address.new(country_id: Spree::Config.default_country_id), geolocate: false } %>
       </div>
 
       <%= render partial: 'spree/checkout/single_page_checkout/button',
           locals: { content: Spree.t('single_page_checkout.next'), id: 'address-next', klass: 'spc-disabled' } %>
 
-      <%# Payment Information %>
-      <%= render 'spree/checkout/single_page_checkout/payment_form' %>
-      <%= render partial: 'spree/checkout/single_page_checkout/button',
-          locals: { content: Spree.t('single_page_checkout.next'), id: 'payment-next', klass: 'spc-disabled' } %>
+      <% if @order.payment_required? %>
+        <%# Payment Information %>
+        <%= render 'spree/checkout/single_page_checkout/payment_form' %>
+        <%= render partial: 'spree/checkout/single_page_checkout/button',
+            locals: { content: Spree.t('single_page_checkout.next'), id: 'payment-next', klass: 'spc-disabled' } %>
+      <% end %>
     </div>
   </div>
 

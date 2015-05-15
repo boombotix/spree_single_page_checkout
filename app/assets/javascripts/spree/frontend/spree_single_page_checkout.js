@@ -33,9 +33,11 @@ Spree.singlePageCheckout = {
 
   // Activates the pay button
   readyForm: function() {
-    $('#checkout-pay-btn').unbind('click').on('click', function() {
+    $('#checkout-pay-btn').unbind('click').on('click', function(e) {
+      e.preventDefault();
+
       Spree.singlePageCheckout.apiRequest(
-          '/api/checkouts/' + Spree.current_order_id + '.json',
+          '/api/checkouts/' + Spree.current_order_id + '/purchase.json',
           {},
           function(){}
         ).done(function() {
@@ -243,8 +245,10 @@ Spree.singlePageCheckout = {
 
   // Make an API call when the user selects their delivery options
   checkoutDelivery: function(rate_id, shipment_id) {
-    Spree.singlePageCheckout.currentOrder.shipments_attributes = new Spree.singlePageCheckout.ShipmentMethod(rate_id, shipment_id);
-    Spree.singlePageCheckout.updateOrder();
+      var data = new Spree.singlePageCheckout.ShipmentMethod(rate_id, shipment_id);
+      var url = '/api/checkouts/' + Spree.current_order_id + '/shipments.json';
+    Spree.singlePageCheckout.apiRequest(url, data).
+      done(Spree.singlePageCheckout.updateOrderSummary);
   },
 
   // Only enable the pay button once all prior steps have been completed.
@@ -368,7 +372,7 @@ Spree.singlePageCheckout = {
     };
 
     data.template = this.options.template || 'spree/api/orders/show_with_manifest';
-    var url = '/api/checkouts/' + Spree.current_order_id + '.json';
+    var url = '/api/checkouts/' + Spree.current_order_id + '/single.json';
     return this.apiRequest(url, data, function(response) { });
   },
 
@@ -383,7 +387,7 @@ Spree.singlePageCheckout = {
     };
 
     data.template = this.options.template || 'spree/api/orders/show_with_manifest';
-    var url = '/api/checkouts/' + Spree.current_order_id + '.json';
+    var url = '/api/checkouts/' + Spree.current_order_id + '/single.json';
     return this.apiRequest(url, data, function(response) { });
   },
 

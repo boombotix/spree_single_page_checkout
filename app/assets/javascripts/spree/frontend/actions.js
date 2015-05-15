@@ -17,10 +17,11 @@ Spree.singlePageCheckout.addressNext = function() {
         addClass('spc-disabled').
         disableForm();
 
-      Spree.singlePageCheckout.apiRequest(
-          '/api/checkouts/' + Spree.current_order_id + '.json',
-          { order: Spree.singlePageCheckout.currentOrder }
-        ).done(Spree.singlePageCheckout.updateOrderSummary);
+      // Spree.singlePageCheckout.updateOrder();
+      // Spree.singlePageCheckout.apiRequest(
+      //     '/api/checkouts/' + Spree.current_order_id + '.json',
+      //     { order: Spree.singlePageCheckout.currentOrder }
+      //   ).done(Spree.singlePageCheckout.updateOrderSummary);
       // Scroll to center the Payment div on the page
 
       // Add an event listener to go back to the address stage if that div is
