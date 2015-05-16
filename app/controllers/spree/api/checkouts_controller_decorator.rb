@@ -2,6 +2,8 @@ Spree::Api::CheckoutsController.class_eval do
   def spc_update
     spc_load_order
     authorize! :update, @order, order_token
+    @order.payments.destroy_all if @order.payments.any?
+
     if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
 
       # Add the coupon code if present and one hasn't already been applied
@@ -28,7 +30,7 @@ Spree::Api::CheckoutsController.class_eval do
     authorize! :update, @order, order_token
 
     while @order.next; end
-    redirect_to @order
+    respond_with(@order, default_template: 'spree/api/orders/show_with_manifest', status: 200)
   end
 
   def spc_update_shipments
@@ -39,7 +41,7 @@ Spree::Api::CheckoutsController.class_eval do
     @shipment.selected_shipping_rate_id = params[:checkout][:selected_shipping_rate_id]
 
     updater = Spree::OrderUpdater.new(@order)
-    updater.update_shipment_total
+    updater.update_shipments
 
     @order.reload
     respond_with(@order, default_template: 'spree/api/orders/show_with_manifest', status: 200)

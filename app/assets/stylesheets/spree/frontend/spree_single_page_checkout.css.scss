@@ -139,10 +139,6 @@
       line-height: 140%;
     }
   }
-  .validation-error {
-    // border: 1px solid #a94442;
-    @include boxShadow(inset 0 0 10px $validation);
-  }
   input {
     &[type="radio"], &[type="checkbox"] {
       outline: none;
@@ -200,6 +196,11 @@
   padding-top: 2px;
 }
 
+.emailInfo {
+  border: 2px solid $borders;
+  margin-bottom: 1rem;
+}
+
 .geoLocator {
   height: 2.5rem;
   line-height: 2.5rem;
@@ -224,6 +225,8 @@
   .row {
     margin: 0;
     padding: 0;
+    position: relative;
+
     .col-md-6, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
       margin: 0;
       padding: 0;
@@ -236,9 +239,9 @@
 }
 
 .paymentInfo,
-.addressInfo {
+.addressInfo,
+.emailInfo {
   @include borderRadius(3px);
-  // margin-bottom: 2.875rem;
 }
 
 .paymentInfo {
@@ -258,6 +261,26 @@
   border: 2px solid $borders;
   border-bottom-width: 0;
   @include borderRadius(3px 3px 0 0);
+}
+
+.validation-error {
+  // border: 1px solid #a94442;
+  // @include boxShadow(inset 0 0 10px $validation);
+
+  & + .validation-label {
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+}
+
+.validation-label {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  color: $validation;
+  font-size: $validation-size;
+  opacity: 0;
+  transition: opacity 1s ease;
 }
 
 label .fa-check-square-o {
@@ -385,6 +408,6 @@ label .fa-check-square-o {
     color: $heading;
     text-transform: uppercase;
     font-size: 1.9rem;
-    margin: 1.875em 0 2.5em;
+    margin: 1.5rem 0;
   }
 }

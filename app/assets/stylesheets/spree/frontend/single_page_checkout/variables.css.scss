@@ -37,6 +37,9 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif;
 $regular: $boombotixRegular;
 $bold: $boombotixBold;
 
+// Font Sizes
+$validation-size: 12px;
+
 // Mixins
 @mixin boxShadow($params) {
   -moz-box-shadow: $params;

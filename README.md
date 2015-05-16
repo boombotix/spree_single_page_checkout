@@ -42,6 +42,10 @@ bundle
 bundle exec rails g spree_single_page_checkout:install
 ```
 
+Optionally, if you have guest checkout enabled, you can set
+`Spree::Auth::Config[:registration_step]` to `false`
+since we gather the email in the checkout.
+
 Testing
 -------
 

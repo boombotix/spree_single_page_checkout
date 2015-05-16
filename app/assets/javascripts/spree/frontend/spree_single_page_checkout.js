@@ -36,11 +36,10 @@ Spree.singlePageCheckout = {
     $('#checkout-pay-btn').unbind('click').on('click', function(e) {
       e.preventDefault();
 
-      Spree.singlePageCheckout.apiRequest(
-          '/api/checkouts/' + Spree.current_order_id + '/purchase.json',
-          {},
-          function(){}
-        ).done(function() {
+      Spree.singlePageCheckout.apiRequest({
+          url: '/api/checkouts/' + Spree.current_order_id + '/purchase.json',
+          data: {}
+      }).done(function() {
           //Redirect to the orders/show page
           window.location = '/orders/' + Spree.current_order_id;
         }).error(function() {
@@ -53,23 +52,23 @@ Spree.singlePageCheckout = {
   },
 
   // // Disables the pay button
-  // disableForm: function() {
-  //   var checkoutPayBtn = $('#checkout-pay-btn');
-  //   var buttonPrice = $('#button-price');
-  //   checkoutPayBtn.removeClass('spc-ready');
-  //   checkoutPayBtn.unbind('click').on('click', function() {
-  //     checkoutPayBtn.addClass('disabled need-info');
-  //     $('#pay-button-container').effect('shake');
-  //     setTimeout(function() {
-  //       checkoutPayBtn.removeClass('disabled need-info');
-  //     }, 1000);
-  //   });
-  // },
+  disableForm: function() {
+    var checkoutPayBtn = $('#checkout-pay-btn');
+    var buttonPrice = $('#button-price');
+    checkoutPayBtn.removeClass('spc-ready');
+    checkoutPayBtn.unbind('click').on('click', function() {
+      checkoutPayBtn.addClass('disabled need-info');
+      $('#pay-button-container').effect('shake');
+      setTimeout(function() {
+        checkoutPayBtn.removeClass('disabled need-info');
+      }, 1000);
+    });
+  },
 
   checkoutAddress: function() {
     // Validate the form inputs: sets an error class if the
     // field does not match the 'pattern' attribute
-    $('.addressInfo form').h5Validate({
+    $('.addressInfo form, .emailInfo form').h5Validate({
       errorClass: 'validation-error'
     });
 
@@ -88,8 +87,12 @@ Spree.singlePageCheckout = {
         }
       };
 
+      var emailValid = function () {
+        return $('.emailInfo form').h5Validate('allValid');
+      };
+
       // if all of the required inputs have been filled out,
-      if (formsValid()) {
+      if (formsValid() && emailValid()) {
 
         // Prepare the object for PUT to the server:
         var shippingAddress = new Spree.singlePageCheckout.Address(shippingAddressForm);
@@ -97,13 +100,11 @@ Spree.singlePageCheckout = {
         Spree.singlePageCheckout.currentOrder.ship_address_attributes = shippingAddress;
         Spree.singlePageCheckout.currentOrder.bill_address_attributes = Spree.singlePageCheckout.useSameAddress ?
           shippingAddress : billingAddress;
+        Spree.singlePageCheckout.currentOrder.email = $('#order-email').val();
 
-        // Make the next button active.
-        $('#address-next').removeClass('spc-disabled');
+        Spree.singlePageCheckout.addressFormReady = true;
       } else {
-        // Prevent the next button from being clicked.
-        $('#address-next').addClass('spc-disabled');
-
+        Spree.singlePageCheckout.addressFormReady = false;
       }
     };
 
@@ -245,9 +246,9 @@ Spree.singlePageCheckout = {
 
   // Make an API call when the user selects their delivery options
   checkoutDelivery: function(rate_id, shipment_id) {
-      var data = new Spree.singlePageCheckout.ShipmentMethod(rate_id, shipment_id);
-      var url = '/api/checkouts/' + Spree.current_order_id + '/shipments.json';
-    Spree.singlePageCheckout.apiRequest(url, data).
+    var data = new Spree.singlePageCheckout.ShipmentMethod(rate_id, shipment_id);
+    var url = '/api/checkouts/' + Spree.current_order_id + '/shipments.json';
+    Spree.singlePageCheckout.apiRequest({ url: url, data: data }).
       done(Spree.singlePageCheckout.updateOrderSummary);
   },
 
@@ -295,17 +296,18 @@ Spree.singlePageCheckout = {
           payment_validate.date.valid &&
           payment_validate.cvc.valid) {
           Spree.singlePageCheckout.paymentFormValid = true;
-
-          // Enable the 'payment-next' button
-          $('#payment-next').removeClass('spc-disabled');
-
         } else {
           Spree.singlePageCheckout.paymentFormValid = false;
+        }
 
+        if (Spree.singlePageCheckout.addressFormReady &&
+            Spree.singlePageCheckout.paymentFormValid) {
+          // Enable the 'payment-next' button
+          $('#payment-next').removeClass('spc-disabled');
+        } else {
           // Disable the 'payment-next' button
           $('#payment-next').addClass('spc-disabled');
         }
-        // Spree.singlePageCheckout.checkCompleteForm();
       });
     } else {
       $('#checkout-pay-btn').removeClass('disabled');
@@ -373,7 +375,7 @@ Spree.singlePageCheckout = {
 
     data.template = this.options.template || 'spree/api/orders/show_with_manifest';
     var url = '/api/checkouts/' + Spree.current_order_id + '/single.json';
-    return this.apiRequest(url, data, function(response) { });
+    return this.apiRequest({url: url, data: data});
   },
 
   updatePayment: function() {
@@ -388,27 +390,27 @@ Spree.singlePageCheckout = {
 
     data.template = this.options.template || 'spree/api/orders/show_with_manifest';
     var url = '/api/checkouts/' + Spree.current_order_id + '/single.json';
-    return this.apiRequest(url, data, function(response) { });
-  },
-
-  advance: function() {
-    var url = '/api/checkouts/' + Spree.current_order_id + '.json';
-    var data = {};
-    data.template = this.options.template || 'spree/api/orders/show_with_manifest';
-    return this.apiRequest(url, data, function(response) { });
+    return this.apiRequest({url: url, data: data });
   },
 
   // function for making Spree API calls
-  apiRequest: function(url, data, callback) {
+  apiRequest: function(options) {
+    // Display a loading message while we make API requests...
+    $('#line-items').html(
+      '<div class="checkout-loading">' +
+      '<i class="fa fa-gear fa-spin fa-4x"></i>' +
+      '<span>Updating your order...</span></div>'
+    );
+    var data = options.data || {};
     data.order_token = Spree.current_order_token;
     data = JSON.stringify(data);
     return $.ajax({
-      url: url + '?order_token=' + Spree.current_order_token,
-      method: 'PUT',
+      url: options.url + '?order_token=' + Spree.current_order_token,
+      method: options.method || 'PUT',
       dataType: 'json',
       contentType: 'application/json',
       data: data,
-      success: callback,
+      success: options.success,
       error: function(response, b, c) {
         Spree.singlePageCheckout.errorHandler(response, b, c);
       }
@@ -417,11 +419,7 @@ Spree.singlePageCheckout = {
 
   // Handle Errors returned from the API
   errorHandler: function(apiResponse, b, c) {
-    // This can be built out if need be in the future; Currently the only
-    // field that will throw a validation error from the API is the
-    // state_name field.
     // TODO Update this for all error messages
-    $('#address_state_name').addClass('validation-error');
   },
 
 
@@ -429,10 +427,9 @@ Spree.singlePageCheckout = {
   init: function() {
     this.currentOrder = new Spree.singlePageCheckout.Order();
     this.checkoutAddress();
-    this.addressNext();
     this.checkoutPayment();
     this.paymentNext();
-    this.checkoutCoupon();
+    // this.checkoutCoupon();
     this.loadAddons();
   }
 }; // END Spree.singlePageCheckout
@@ -586,15 +583,6 @@ $(document).ready(function() {
       $('#spc-billing-address').toggle();
     });
 
-    // listen for changes on the address box
-    // Spree.singlePageCheckout.checkoutAddress();
-
-    // listen for changes on the payments box
-    // Spree.singlePageCheckout.checkoutPayment();
-
-    // Load 'accessories' section
-    // Spree.singlePageCheckout.loadAddons();
-
     // Check if promo has been entered upon page refresh
     if ($('.promotion-label').length > 0) {
       Spree.singlePageCheckout.promoApproved = true;
@@ -604,7 +592,9 @@ $(document).ready(function() {
 
     // Listen for changes in the promotion code input field
     // Spree.singlePageCheckout.checkoutCoupon();
+    $('.info [required]').after('<label class="validation-label">required</label>');
 
     Spree.singlePageCheckout.init();
+
   }
 });
