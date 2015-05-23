@@ -238,10 +238,6 @@ Spree.singlePageCheckout = {
       Spree.singlePageCheckout.checkoutCoupon();
     }
 
-    // Update the payment variable
-    if (data.payments.length > 0) {
-      Spree.singlePageCheckout.payment = true;
-    }
   },
 
   // Make an API call when the user selects their delivery options
@@ -255,7 +251,7 @@ Spree.singlePageCheckout = {
   // Only enable the pay button once all prior steps have been completed.
   checkoutPayment: function() {
     if ($('.paymentInfo').length > 0) {
-      $('.paymentInfo input').on('change', function() {
+      $('.paymentInfo input').on('keyup', function() {
 
         var payment_validate = {
           name: {
@@ -373,7 +369,6 @@ Spree.singlePageCheckout = {
       "order": Spree.singlePageCheckout.currentOrder,
     };
 
-    data.template = this.options.template || 'spree/api/orders/show_with_manifest';
     var url = '/api/checkouts/' + Spree.current_order_id + '/single.json';
     return this.apiRequest({url: url, data: data});
   },
@@ -388,7 +383,6 @@ Spree.singlePageCheckout = {
       "payment_source": new Spree.singlePageCheckout.Payment($('.paymentInfo form'))
     };
 
-    data.template = this.options.template || 'spree/api/orders/show_with_manifest';
     var url = '/api/checkouts/' + Spree.current_order_id + '/single.json';
     return this.apiRequest({url: url, data: data });
   },
@@ -402,6 +396,8 @@ Spree.singlePageCheckout = {
       '<span>Updating your order...</span></div>'
     );
     var data = options.data || {};
+
+    data.template = Spree.singlePageCheckout.options.template || 'spree/api/orders/spc_show';
     data.order_token = Spree.current_order_token;
     data = JSON.stringify(data);
     return $.ajax({
@@ -595,6 +591,13 @@ $(document).ready(function() {
     $('.info [required]').after('<label class="validation-label">required</label>');
 
     Spree.singlePageCheckout.init();
+
+    // Make the Enter button behave as if it's submitting the form
+    $('.paymentInfo input').on('keypress', function(e) {
+      if (e.which === 13) {
+        $('#payment-next').trigger('click');
+      }
+    });
 
   }
 });
