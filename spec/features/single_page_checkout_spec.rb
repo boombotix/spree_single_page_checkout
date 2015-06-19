@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pry'
 
 describe 'Single Page Checkout', type: :feature, js: true do
   let!(:country) { create(:country, states_required: true) }
@@ -84,6 +83,7 @@ describe 'Single Page Checkout', type: :feature, js: true do
   end
 
   it 'Geolocates the Customer' do
+    skip # To be removed.
     find('.geoLocator').click
     sleep 3.seconds
     expect(find('#spc-shipping-address .street').value).to eq('8000 Sunset Blvd')
