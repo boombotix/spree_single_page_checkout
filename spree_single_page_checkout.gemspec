@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '3.0.0'
+  s.add_dependency 'spree_core', '~> 3.0.0'
   s.add_dependency 'bootstrap-sass',  '~> 3'
   s.add_dependency 'font-awesome-rails', '~> 4.0'
 
