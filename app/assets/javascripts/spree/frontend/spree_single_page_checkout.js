@@ -123,7 +123,7 @@ Spree.singlePageCheckout.checkoutAddress = function() {
       };
 
       // make the AJAX request:
-      Spree.singlePageCheckout.apiRequest(data);
+      Spree.singlePageCheckout.apiRequest(data, 'address');
     }
     else {
       // Keeps pay button disabled or makes it
@@ -282,7 +282,7 @@ Spree.singlePageCheckout.checkoutDelivery = function(rate_id, shipment_id) {
         ]
       }
     };
-  Spree.singlePageCheckout.apiRequest(data);
+  Spree.singlePageCheckout.apiRequest(data, 'delivery');
 };
 
 // Only enable the pay button once all prior steps have been completed.
@@ -358,7 +358,7 @@ Spree.singlePageCheckout.checkoutCoupon = function() {
             coupon_code: entered_code
           }
         };
-        Spree.singlePageCheckout.apiRequest(data);
+        Spree.singlePageCheckout.apiRequest(data, 'address');
       }
       else {
         Spree.singlePageCheckout.couponMessageCreate('A coupon code has already been applied!');
@@ -386,7 +386,7 @@ Spree.singlePageCheckout.couponMessageCreate = function(message) {
 };
 
 // function for making Spree API calls
-Spree.singlePageCheckout.apiRequest = function(data) {
+Spree.singlePageCheckout.apiRequest = function(data, state) {
   // Display a loading message while the API call is in progress.
   $('#line-items').html(
     '<div class="checkout-loading">' +
@@ -396,6 +396,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
 
   var url = '/api/checkouts/' + Spree.current_order_id;
   data.order_token = Spree.current_order_token;
+  data.state = state;
   data.template = 'spree/api/orders/show_with_manifest';
   $.ajax({
     url: url,
@@ -532,7 +533,7 @@ Spree.singlePageCheckout.lineItemApiRequest = function(itemId, method) {
             // THIS IS A HACK.  We should refactor to make this modular/elegant
             // (because eww)
           if (Spree.singlePageCheckout.state !== 'address') {
-            Spree.singlePageCheckout.apiRequest({});
+            Spree.singlePageCheckout.apiRequest({}, 'delivery');
           }
         },
         error: function(response) {
