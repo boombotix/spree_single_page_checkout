@@ -678,7 +678,7 @@ $(document).ready(function() {
 
     // Show / Hide the billing address info when the checkbox is clicked
     Spree.singlePageCheckout.useSameAddress = true;
-    $('.billing-address-toggle').on('click', function() {
+    $('.billing-address-toggle').unbind('click').on('click', function() {
       var el = $(this);
       var faCheckbox = el.siblings('label').find('.fa');
       if (el.is(':checked')) {
@@ -698,7 +698,10 @@ $(document).ready(function() {
     Spree.singlePageCheckout.checkoutPayment();
 
     // Load 'accessories' section
-    Spree.singlePageCheckout.loadAddons();
+    if (!Spree.addonsLoaded) {
+      Spree.singlePageCheckout.loadAddons();
+      Spree.addonsLoaded = true;
+    }
 
     // Check if promo has been entered upon page refresh
     if ($('.promotion-label').length > 0) {

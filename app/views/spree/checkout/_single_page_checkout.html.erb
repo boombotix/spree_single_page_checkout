@@ -8,10 +8,6 @@
   <div class="col-xs-12 col-sm-5 col-md-5">
     <div class="checkout-container index">
 
-      <% flash.each do |name, msg| -%>
-        <%= content_tag :div, msg, class: name %>
-      <% end -%>
-
       <%# Shipping Address Form %>
       <div class="addressInfo info" id="spc-shipping-address">
         <h3>Shipping Address</h3>
