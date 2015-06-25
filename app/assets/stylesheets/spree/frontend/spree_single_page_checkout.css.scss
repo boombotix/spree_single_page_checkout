@@ -2,10 +2,25 @@
 // the installer will append this file to the app vendored assets here:
 // 'vendor/assets/stylesheets/spree/frontend/all.css'
 //
-//= require jquery-ui
+//= require jquery-ui/autocomplete
 
-$boombotixRegular: "TwCenMT-Regular", "Futura", "Century Gothic", Arial, sans-serif !default;
-$boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !default;
+@mixin boombotixRegular {
+  @include gotham-book;
+}
+
+@mixin boombotixBold {
+  @include gotham-bold;
+}
+
+@mixin gotham-book {
+  font-family: 'Gotham A', 'Gotham B', sans-serif;
+  font-weight: 400;
+}
+
+@mixin gotham-bold {
+  font-family: 'Gotham A', 'Gotham B', sans-serif;
+  font-weight: 700;
+}
 
 @mixin boxShadow($params) {
   -moz-box-shadow: $params;
@@ -43,6 +58,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
     line-height: 100%;
     height: 2.5rem;
     @include boxShadow(none);
+    @include boombotixRegular;
     &:focus {
       background: #FAFAFA;
       border: 2px solid #999999;
@@ -69,7 +85,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
     .row {
       margin: 0;
       color: #292929;
-      font-family: $boombotixBold;
+      @include boombotixBold;
       font-size: 1.4em;
       padding: .625rem 0 .8125rem;
       line-height: 100%;
@@ -79,13 +95,13 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
     }
     h5 {
       color: #50C1FC;
-      font-family: $boombotixBold;
+      @include boombotixBold;
       font-size: 1.1em;
       font-weight: normal;
       padding: .4375rem 0 .9375rem;
     }
     label {
-      font-family: $boombotixRegular;
+      @include boombotixRegular;
       color: #363636;
       font-size: .92rem;
       font-weight: normal;
@@ -134,7 +150,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
   padding: 0;
   .button {
     background: #0079c1;
-    font-family: $boombotixRegular;
+    @include boombotixRegular;
     font-size: 1em;
     padding: 0.6875rem 0;
     border-radius: 3px;
@@ -166,7 +182,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
     }
   }
   h2 {
-    font-family: $boombotixRegular;
+    @include boombotixRegular;
     font-weight: normal;
     font-size: 1.66em;
     color: #5a5a5a;
@@ -175,7 +191,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
     margin-top: 0;
   }
   h3 {
-    font-family: $boombotixRegular;
+    @include boombotixRegular;
     text-transform: none;
     font-size: 1rem;
     color: #5a5a5a;
@@ -222,7 +238,7 @@ $boombotixBold: "TwCenMT-Bold", "Futura", "Century Gothic", Arial, sans-serif !d
   outline: none;
   padding: .6875rem .625rem;
   background: #46afee;
-  font-family: $boombotixRegular;
+  @include boombotixRegular;
   font-size: 1.9em;
   -webkit-appearance: none;
   &:hover {
@@ -435,7 +451,7 @@ select#address_state_name.form-control.state.h5-active.ui-state-valid {
   }
   label {
     font-size: 1rem;
-    font-family: $boombotixRegular;
+    @include boombotixRegular;
     color: #5a5a5a;
     font-weight: normal;
   }
