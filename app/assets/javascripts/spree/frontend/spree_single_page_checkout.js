@@ -11,8 +11,8 @@
 // ================================================= //
 
 // Initialize the Spree object
-if (Spree === undefined) {
-    var Spree = {};
+if (window.Spree === undefined) {
+    window.Spree = {};
 }
 
 // Namespace the functions of the single page checkout to prevent possible collisions
@@ -255,13 +255,8 @@ Spree.singlePageCheckout.updateOrderSummary = function(data) {
 
     if (Spree.singlePageCheckout.promoApproved === true) {
         $('#coupon-message').remove();
-        var container = $('.paymentInfo');
-        var span_tag = $('<span>');
-        span_tag.attr('id', 'coupon-message');
-        container.append(span_tag);
-        span_tag.html('Coupon code successfully applied!');
-    } else {
-        Spree.singlePageCheckout.checkoutCoupon();
+        Spree.singlePageCheckout.couponMessageCreate('Coupon code applied.');
+        $('#spc-promo-apply, #coupon_code').attr('disabled', true);
     }
 
     // Update the payment variable
@@ -342,7 +337,12 @@ Spree.singlePageCheckout.checkoutPayment = function() {
 Spree.singlePageCheckout.checkoutCoupon = function() {
     var couponCodeBtn = $('#spc-promo-apply');
     var couponCodeInput = $('#coupon_code');
-    couponCodeBtn.on('click', function() {
+    var tries = 0;
+    var makeRequest = function(data) {
+        tries++;
+        return Spree.singlePageCheckout.apiRequest(data);
+    };
+    couponCodeBtn.unbind('click').on('click', function() {
         if (Spree.singlePageCheckout.state !== 'address') {
             // Removes the early coupon attempt message
             if (Spree.singlePageCheckout.earlyCouponAttempt === true) {
@@ -358,11 +358,16 @@ Spree.singlePageCheckout.checkoutCoupon = function() {
                     },
                     state: Spree.singlePageCheckout.state
                 };
-                Spree.singlePageCheckout.apiRequest(data).
+                makeRequest(data).
+                    fail(function() {
+                        // Try again if it doesn't work the first time.
+                        makeRequest(data);
+                    }).
                     done(function() {
                         couponCodeInput.attr('disabled', true);
                         couponCodeBtn.attr('disabled', true);
                     });
+
             } else {
                 Spree.singlePageCheckout.couponMessageCreate('A coupon code has already been applied!');
             }
@@ -414,7 +419,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
             // removes all shipping selections from the page if updateOrderSummary
             // is called with just that data. updateOrderSummary will only
             // be called if shipment data exists within the response
-            if (Object.keys(response).indexOf('shipments') > -1) {
+            if (response.hasOwnProperty('shipments')) {
                 Spree.singlePageCheckout.updateOrderSummary(response);
             } else {
                 // Invalid coupons will still update shipping rate ID's on the
