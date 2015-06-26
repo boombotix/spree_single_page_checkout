@@ -702,7 +702,7 @@ $(document).ready(function() {
 
         // Load 'accessories' section
         if (!Spree.addonsLoaded) {
-            Spree.singlePageCheckout.loadAddons();
+            // Spree.singlePageCheckout.loadAddons();
             Spree.addonsLoaded = true;
         }
 
