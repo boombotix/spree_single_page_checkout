@@ -83,18 +83,24 @@
         </div>
       </div>
     </div>
+  <% end # Form Tag %>
 
+  <%# Coupon Code Input -- Submitted async. %>
     <div class="row bottom-row">
-      <%= text_field_tag(
-        'order[coupon_code]',
-        nil,
-        {
-          class: 'form-control coupon',
-          id: 'coupon_code',
-          placeholder: 'Promotion Code'
-        }
-      ) %>
+      <div class="input-group">
+        <%= text_field_tag(
+          'order[coupon_code]',
+          nil,
+          {
+            class: 'form-control coupon',
+            id: 'coupon_code',
+            placeholder: 'Promotion Code'
+          }
+        ) %>
+        <span class="input-group-btn">
+          <button class="btn btn-default spc-promo-btn" id="spc-promo-apply" type="button">Apply</button>
+        </span>
+      </div>
     </div>
-  <% end %>
   <% session[:payment_details] = nil %>
 </div>

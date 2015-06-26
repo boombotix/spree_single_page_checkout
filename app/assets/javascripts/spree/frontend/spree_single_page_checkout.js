@@ -340,38 +340,40 @@ Spree.singlePageCheckout.checkoutPayment = function() {
 
 // Allows coupon entry and grabs coupon code for an API call
 Spree.singlePageCheckout.checkoutCoupon = function() {
-    var couponCode = $('#coupon_code');
-    if (Spree.singlePageCheckout.state) {
-        // Removes the early coupon attempt message
-        if (Spree.singlePageCheckout.earlyCouponAttempt === true) {
-            $('#coupon-message').remove();
-            Spree.singlePageCheckout.earlyCouponAttempt = false;
-        }
-        couponCode.unbind('keydown paste');
-        couponCode.unbind('change').on('change', function() {
+    var couponCodeBtn = $('#spc-promo-apply');
+    var couponCodeInput = $('#coupon_code');
+    couponCodeBtn.on('click', function() {
+        if (Spree.singlePageCheckout.state !== 'address') {
+            // Removes the early coupon attempt message
+            if (Spree.singlePageCheckout.earlyCouponAttempt === true) {
+                $('#coupon-message').remove();
+                Spree.singlePageCheckout.earlyCouponAttempt = false;
+            }
             // Only make API call if no coupon has been approved
             if (Spree.singlePageCheckout.promoApproved === false) {
-                var entered_code = couponCode.val();
+                var entered_code = couponCodeInput.val();
                 var data = {
                     order: {
                         coupon_code: entered_code
                     },
                     state: Spree.singlePageCheckout.state
                 };
-                Spree.singlePageCheckout.apiRequest(data);
+                Spree.singlePageCheckout.apiRequest(data).
+                    done(function() {
+                        couponCodeInput.attr('disabled', true);
+                        couponCodeBtn.attr('disabled', true);
+                    });
             } else {
                 Spree.singlePageCheckout.couponMessageCreate('A coupon code has already been applied!');
             }
-        });
-    } else {
-        // Disables coupon field if address has not been entered
-        couponCode.unbind('keydown paste').on('keydown paste', function() {
-            Spree.singlePageCheckout.couponMessageCreate('Please enter in address before entering coupon code.');
+        } else {
+            // Disables coupon field if address has not been entered
+            Spree.singlePageCheckout.couponMessageCreate('Please enter address information before submitting coupon code.');
             // Sets value to true if coupon input attempt was made before address
             Spree.singlePageCheckout.earlyCouponAttempt = true;
             return false;
-        });
-    }
+        }
+    });
 };
 
 Spree.singlePageCheckout.couponMessageCreate = function(message) {
@@ -395,7 +397,7 @@ Spree.singlePageCheckout.apiRequest = function(data) {
     var url = '/api/checkouts/' + Spree.current_order_id;
     data.order_token = Spree.current_order_token;
     data.template = 'spree/api/orders/show_with_manifest';
-    $.ajax({
+    return $.ajax({
         url: url,
         method: 'PUT',
         dataType: 'json',
