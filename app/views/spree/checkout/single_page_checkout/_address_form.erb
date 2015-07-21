@@ -71,23 +71,32 @@
   </div> <%# .row %>
   <div class="row middle-row">
     <div class="col-xs-12 col-sm-8 col-md-8 states-container">
-      <% state_name = form.object.state ? form.object.state.name : nil %>
-      <%= form.collection_select(:state_name,
-        form.object.country.states.sort,
-        :name,
-        :name,
-        {
-          selected: state_name,
-          include_blank: true
-        },
-        {
-          id: "#{ address.id }-state-name",
+      <% if form.object.state_name.present? %>
+        <%= form.text_field(:state_name,
+          id: "#{ address.id }-address_state_name",
           class: 'form-control state',
-          required: true,
-          autocomplete: 'address-level1',
-          placeholder: 'State'
-        }
-      ) %>
+          placeholder: 'State, Province, or Region',
+          autocomplete: 'address-level1'
+        )%>
+      <% else %>
+        <% state_name = form.object.state ? form.object.state.name : nil %>
+        <%= form.collection_select(:state_name,
+          form.object.country.states.sort,
+          :name,
+          :name,
+          {
+            selected: state_name,
+            include_blank: true
+          },
+          {
+            id: "#{ address.id }-state-name",
+            class: 'form-control state',
+            required: true,
+            autocomplete: 'address-level1',
+            placeholder: 'State'
+          }
+        ) %>
+      <% end %>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-4 right-col">
       <%= form.text_field(:zipcode,
