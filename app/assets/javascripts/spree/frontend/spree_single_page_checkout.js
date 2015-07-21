@@ -463,7 +463,8 @@ Spree.ready(function() {
     }
 
     // Only execute if specific page loads
-    if ($('#checkout-content').length > 0) {
+    Spree.singlePageCheckout.init = function() {
+    // if ($('#checkout-content').length > 0) {
 
         // The initial state of the checkout should be 'address'
         Spree.singlePageCheckout.state = 'address';
@@ -621,5 +622,5 @@ Spree.ready(function() {
 
         // Listen for changes in the promotion code input field
         Spree.singlePageCheckout.checkoutCoupon();
-    }
+    };
 });
